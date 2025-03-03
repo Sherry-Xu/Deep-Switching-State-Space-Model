@@ -14,9 +14,9 @@ This repository provides a PyTorch implementation of DS^3M, which incorporates d
    ```
 
 2.	Install required packages:
-```bash
+    ```bash
     pip install -r requirements.txt
-```
+    ```
 
 ## Repository Structure
 
@@ -53,7 +53,7 @@ Deep-Switching-State-Space-Model/
 └─ requirements.txt
 ```
 
-To reproduce results, download the checkpoints from [this link](https://www.dropbox.com/scl/fo/fytbaft45895y3057r8dp/AIh1K1ZKmI3C8nUuRgZ9wbY?rlkey=vovaus04jfeiqk2gqkw3nnpbb&dl=0), unzip them, and place them under `results/checkpoints/`.
+To reproduce results, download the checkpoints folder from [this link](https://www.dropbox.com/scl/fo/fytbaft45895y3057r8dp/AIh1K1ZKmI3C8nUuRgZ9wbY?rlkey=vovaus04jfeiqk2gqkw3nnpbb&dl=0), unzip it, and place `checkpoints/` folder under `results/`.
 
 ## Usage
 
@@ -67,7 +67,7 @@ Replace Electricity with other dataset names (e.g., Toy, Lorenz, Sleep, Unemploy
 python main.py -p Toy --train
 ```
 
-It will save the best checkpoint (best.tar) to results/checkpoints/<dataset_name>.
+It will save the best checkpoint (best.tar) to `results/checkpoints/<dataset_name>/`.
 
 ## Key Scripts
 
