@@ -1,4 +1,5 @@
 # %%
+import warnings
 import os
 import copy
 import numpy as np
@@ -16,14 +17,12 @@ import torch
 import seaborn as sns
 import matplotlib
 matplotlib.use('Agg')  # Set backend before importing pyplot
-
+warnings.filterwarnings("ignore")
 # %%
 remove_mean = False
 remove_residual = False
-remove_residual_previous = False
 longterm = False
 bidirection = False
-restore = True
 
 # %%
 parser = argparse.ArgumentParser(description='DS3M')
@@ -68,7 +67,7 @@ if dataname == 'Toy':
     clip = 10  # Gradient clips
     learning_rate = 1e-3  # Learning rate
     batch_size = 64  # Batch siz
-    n_epochs = 300  # Number of epochs for traning
+    n_epochs = 100  # Number of epochs for traning
 
     RawDataOriginal = pd.read_csv(
         'data/Toy/simulation_data_nonlinear_y.csv', header=None).values
@@ -93,7 +92,7 @@ if dataname == 'Lorenz':
     clip = 10  # Gradient clips
     learning_rate = 1e-3  # Learning rate
     batch_size = 64  # Batch size
-    n_epochs = 1000
+    n_epochs = 300
 
     import json
     f = open("data/Lorenz/lorenz.json")
@@ -154,7 +153,7 @@ if dataname == 'Unemployment':
     clip = 10  # Gradient clips
     learning_rate = 1e-3  # Learning rate
     batch_size = 64  # Batch siz
-    n_epochs = 300  # Number of epochs for traning
+    n_epochs = 500  # Number of epochs for traning
 
     RawDataOriginal = pd.read_csv(
         'data/Unemployment/UNRATE.csv', header=0).loc[:, 'UNRATE'].values
@@ -281,10 +280,6 @@ else:
     means = 0
 RawData = RawDataOriginal - means
 
-if remove_residual_previous:
-    trend_previous = RawDataOriginal[0:-1, :, :]
-    RawData = RawDataOriginal[1:, :, :] - trend_previous
-
 RawData = RawData.reshape(-1, RawData.shape[2])
 data = RawData
 
@@ -337,14 +332,11 @@ moments = normalize_moments(train_data)
 train_data = normalize_fit(train_data, moments)
 valid_data = normalize_fit(valid_data, moments)
 test_data = normalize_fit(test_data, moments)
-print('std:', train_data.std())
 
 # Create training and test dataset
 trainX, trainY = create_dataset2(train_data, timestep)
 validX, validY = create_dataset2(valid_data, timestep)
 testX, testY = create_dataset2(test_data, timestep)
-print("2D size(X):", trainX.shape, validX.shape, testX.shape)
-print("2D size(Y):", trainY.shape, validY.shape, testY.shape)
 
 trainX = np.transpose(trainX, (1, 0, 2))
 validX = np.transpose(validX, (1, 0, 2))
@@ -367,8 +359,6 @@ testY = torch.from_numpy(testY).float()
 # %%
 directoryBest = os.path.join("results", "checkpoints", dataname)
 figdirectory = os.path.join("results", "figures")
-print(directoryBest)
-print(figdirectory)
 if not os.path.exists(directoryBest):
     os.makedirs(directoryBest)
 if not os.path.exists(figdirectory):
@@ -379,7 +369,6 @@ figdirectory = figdirectory+'/' + dataname + '_'
 # %%
 # Move to GPU if available
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print("Device:", device)
 trainX = trainX.to(device)
 validX = validX.to(device)
 testX = testX.to(device)
@@ -465,7 +454,6 @@ if restore == False:
 # %%
 # Reload the parameters
 PATH = os.path.join(directoryBest, 'checkpoint.tar')
-print(PATH)
 
 # %%
 model = DSSSM(x_dim, y_dim, h_dim, z_dim, d_dim,
@@ -480,8 +468,7 @@ loss = checkpoint['loss']
 print("Epoch:", epoch)
 total_params = sum(p.numel() for p in model.parameters())
 # total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-print("The total number of parameters:", total_params)
-
+# print("The total number of parameters:", total_params)
 
 # %%
 forecaststep = 1
@@ -524,19 +511,11 @@ elif remove_residual:
         all_testForecast, 0.95, axis=1) + trend[-test_len:, :]
     testForecast_lq = np.quantile(
         all_testForecast, 0.05, axis=1) + trend[-test_len:, :]
-elif remove_residual_previous:
-    testForecast_mean = np.mean(all_testForecast, axis=1) + \
-        trend_previous.reshape(-1, predict_dim)[-test_len:, :]
-    testForecast_uq = np.quantile(
-        all_testForecast, 0.95, axis=1) + trend_previous.reshape(-1, predict_dim)[-test_len:, :]
-    testForecast_lq = np.quantile(
-        all_testForecast, 0.05, axis=1) + trend_previous.reshape(-1, predict_dim)[-test_len:, :]
 else:
     testForecast_mean = np.mean(all_testForecast, axis=1)
     testForecast_uq = np.quantile(all_testForecast, 0.95, axis=1)
     testForecast_lq = np.quantile(all_testForecast, 0.05, axis=1)
-testOriginal = RawDataOriginal[-int(test_len/freq)
-                                    :, :, :].reshape(-1, RawDataOriginal.shape[2])
+testOriginal = RawDataOriginal[-int(test_len/freq)                               :, :, :].reshape(-1, RawDataOriginal.shape[2])
 testForecast_mean.shape
 testOriginal.shape
 
@@ -574,15 +553,6 @@ if dataname == 'Toy':
         model, inferX, inferY, 0, "test")
     d_infer = all_d_t_sampled_plot_test[:, 1, 0]
     d_infer = d_infer
-
-    print("Forecasting:")
-    classification_scores(d_original[-size:], DS3M)
-    print("SNLDS")
-    classification_scores(d_original[-size:], SNLDS)
-    print("DSARF")
-    classification_scores(d_original[-size:], DSARF)
-    print("Inference:")
-    classification_scores(d_original[-size:], d_infer)
 
     xticks_int = 10
     fig, (ax1, ax4, ax3, ax5, ax6) = plt.subplots(5, 1, figsize=(20, 10),
@@ -646,9 +616,6 @@ if dataname == 'Lorenz':
         RawDataOriginal[(-test_len-1):-1, :, :]).float().to(device)
     testY2 = torch.from_numpy(
         RawDataOriginal[-test_len:, :, :]).float().to(device)
-    print("3D size(Y):", trainY2.shape, testY2.shape)
-    print("3D size(X):", trainX2.shape, testX2.shape)
-
     all_d_t_sampled_plot_test, all_z_t_sampled_test, loss_test, all_d_posterior_test, all_z_posterior_mean_test = test(
         model, trainX2, trainY2, 0, "test")
     latents = z_true[0, 1:1001, :]

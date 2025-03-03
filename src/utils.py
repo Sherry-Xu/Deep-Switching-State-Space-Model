@@ -11,6 +11,7 @@ import torch
 
 # Normalize dataset
 
+
 def normalize_moments(dataset):
     # dataset is 1-d
     moments = np.zeros(2)
@@ -50,6 +51,7 @@ def minmax_invert(dataset, moments):
 
 # convert an array of values (1-d time series) into a dataset matrix from
 
+
 def create_dataset(dataset, look_back=1, predict_len=1):
     dataX, dataY = [], []
     for i in range(0, len(dataset)-look_back, predict_len):  # predict_len #look_back
@@ -60,6 +62,7 @@ def create_dataset(dataset, look_back=1, predict_len=1):
     return np.array(dataX), np.array(dataY)
 
 # convert an array of values (1-d time series) into a dataset matrix from
+
 
 def create_dataset2(dataset, look_back=1):
     dataX, dataY = [], []
@@ -289,7 +292,7 @@ def PosteriorPredictionPlot(i, plot_data, all_d_t_sampled, all_z_t_sampled, all_
 
     fig.tight_layout()
     plt.show()
-    
+
 
 def duration(status):
     Ss = copy.deepcopy(status)
@@ -317,12 +320,5 @@ def classification_scores(testy, yhat_classes):
         yhat_classes = 1-yhat_classes
     accuracy = accuracy_score(testy, yhat_classes)
     print('Accuracy: %f' % accuracy)
-    # precision tp / (tp + fp)
-    precision = precision_score(testy, yhat_classes)
-    print('Precision: %f' % precision)
-    # recall: tp / (tp + fn)
-    recall = recall_score(testy, yhat_classes)
-    print('Recall: %f' % recall)
-    # f1: 2 tp / (2 tp + fp + fn)
     f1 = f1_score(testy, yhat_classes)
     print('F1 score: %f' % f1)
