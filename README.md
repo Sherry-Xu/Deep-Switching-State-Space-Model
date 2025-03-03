@@ -61,21 +61,26 @@ From the command line, run:
 ```bash
 python main.py -p Electricity
 ```
+
 Replace Electricity with other dataset names (e.g., Toy, Lorenz, Sleep, Unemployment, Hangzhou, Seattle, Pacific) to test those datasets. By default, the script loads the pre-trained checkpoint for inference. If you want to retrain from scratch, add --train, for example:
 ```bash
 python main.py -p Toy --train
 ```
+
 It will save the best checkpoint (best.tar) to results/checkpoints/<dataset_name>.
 
-**Key Scripts**
-	•	main.py
-Parses arguments (-p for dataset, -train for training), loads data, trains or loads a model, and generates result plots.
-	•	src/DSSSMCode.py
-Defines the DS^3M model (discrete + continuous latent variables, RNN encoders, etc.) using PyTorch. Handles forward passes, multi-step forecasting, and loss computations (KL divergence, likelihood, etc.).
-	•	src/utils.py
-Provides data normalization (normalize_fit, normalize_invert), dataset creation (create_dataset2), evaluation metrics (RMSE, MAPE), classification scores, and plotting utilities.
+## Key Scripts
 
-**Figures**
+- **`main.py`**  
+  Parses arguments (`-p` for dataset, `--train` for training), loads data, trains or loads a model, and generates result plots.
+
+- **`src/DSSSMCode.py`**  
+  Defines the DS^3M model (discrete + continuous latent variables, RNN encoders, etc.) using PyTorch. Handles forward passes, multi-step forecasting, and loss computations (KL divergence, likelihood, etc.).
+
+- **`src/utils.py`**  
+  Provides data normalization (`normalize_fit`, `normalize_invert`), dataset creation (`create_dataset2`), evaluation metrics (RMSE, MAPE), classification scores, and plotting utilities.
+
+## Figures
 
 All generated figures are saved to `results/figures/`. The following mappings show how each figure corresponds to the paper:
 
@@ -91,8 +96,6 @@ All generated figures are saved to `results/figures/`. The following mappings sh
 - **Figure 3(h)**: `Pacific_Station 840.png`
 - **Figure 3(i)**: `Electricity_Station 0.png`
 - **Figure 3(j)**: `Electricity_Station 24.png`
-
----
 
 ## Citation
 
