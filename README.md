@@ -5,8 +5,6 @@ Authors: Xiuqin Xu, Hanqiu Peng, Ying Chen
 
 This repository provides a PyTorch implementation of DS^3M, which incorporates discrete and continuous latent variables to capture possible regime-switching behavior in time series. The code covers model training, inference, and visualization across multiple real-world datasets.
 
----
-
 ## Environment Setup
 
 1. Create and activate a conda environment:
@@ -16,8 +14,9 @@ This repository provides a PyTorch implementation of DS^3M, which incorporates d
    ```
 
 2.	Install required packages:
-
-pip install -r requirements.txt
+```bash
+    pip install -r requirements.txt
+```
 
 **Repository Structure**
 
@@ -56,19 +55,19 @@ Deep-Switching-State-Space-Model/
 
 To reproduce results, download the checkpoints from [this link](https://www.dropbox.com/scl/fo/fytbaft45895y3057r8dp/AIh1K1ZKmI3C8nUuRgZ9wbY?rlkey=vovaus04jfeiqk2gqkw3nnpbb&dl=0), unzip them, and place them under `results/checkpoints/`.
 
-Usage
+3. Usage
 
 From the command line, run:
-
+```bash
 python main.py -p Electricity
-
+```
 Replace Electricity with other dataset names (e.g., Toy, Lorenz, Sleep, Unemployment, Hangzhou, Seattle, Pacific) to test those datasets. By default, the script loads the pre-trained checkpoint for inference. If you want to retrain from scratch, add --train, for example:
-
+```bash
 python main.py -p Toy --train
-
+```
 It will save the best checkpoint (best.tar) to results/checkpoints/<dataset_name>.
 
-Key Scripts
+**Key Scripts**
 	•	main.py
 Parses arguments (-p for dataset, -train for training), loads data, trains or loads a model, and generates result plots.
 	•	src/DSSSMCode.py
@@ -76,7 +75,7 @@ Defines the DS^3M model (discrete + continuous latent variables, RNN encoders, e
 	•	src/utils.py
 Provides data normalization (normalize_fit, normalize_invert), dataset creation (create_dataset2), evaluation metrics (RMSE, MAPE), classification scores, and plotting utilities.
 
-Figures
+**Figures**
 
 All generated figures are saved to results/figures/. The following mappings show how each figure corresponds to the paper:
 	•	Figure 2(a): Toy_Prediction.png
@@ -92,7 +91,7 @@ All generated figures are saved to results/figures/. The following mappings show
 	•	Figure 3(i): Electricity_Station 0.png
 	•	Figure 3(j): Electricity_Station 24.png
 
-Citation
+**Citation**
 
 If you find this code useful, please cite:
 
