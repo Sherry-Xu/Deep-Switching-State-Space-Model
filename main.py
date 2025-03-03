@@ -1,37 +1,21 @@
 # %%
-# from torch.distributions import Gumbel, Bernoulli, Normal
 import os
 import copy
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from torch.optim.lr_scheduler import StepLR, ReduceLROnPlateau
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 import time
 import matplotlib
 import argparse
 from src.DSSSMCode import *
 from src.utils import *
-# from torchvision import datasets, transforms
 import torch.utils.data
 import torch.utils
-# import torch.nn as nn
 import torch
-# from mpl_toolkits.mplot3d import Axes3D
 import seaborn as sns
 import matplotlib
 matplotlib.use('Agg')  # Set backend before importing pyplot
-# import math
-# from IPython.core.interactiveshell import InteractiveShell
-# %matplotlib inline
-
-# %%
-# InteractiveShell.ast_node_interactivity = "all"
-
-
-# from torchviz import make_dot, make_dot_from_trace
-# from tensorboardX import SummaryWriter
-
-# %%
 
 # %%
 remove_mean = False
@@ -40,7 +24,6 @@ remove_residual_previous = False
 longterm = False
 bidirection = False
 restore = True
-# normalized = True
 
 # %%
 parser = argparse.ArgumentParser(description='DS3M')
@@ -347,8 +330,6 @@ print("train size (days):", train_data.shape[0],
       "valid size(days):", valid_data.shape[0],
       "test size(days):", test_data.shape[0])
 
-# %%
-timestep
 
 # %%
 # Normalize the dataset
@@ -407,8 +388,6 @@ validY = validY.to(device)
 testY = testY.to(device)
 
 # %%
-# writer = SummaryWriter()
-
 # Training
 start = time.time()
 loss_train_list = []
@@ -420,17 +399,13 @@ best_validation = 1e5
 model = DSSSM(x_dim, y_dim, h_dim, z_dim, d_dim,
               n_layers, device, bidirection).to(device)
 
-# The Parameters
-# total_params = sum(p.numel() for p in model.parameters())
+# Parameters
 total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
 print("The total number of parameters:", total_params)
 
 # Optimizer
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
-# optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
-# scheduler = StepLR(optimizer, step_size=15, gamma=0.1)
 scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=10)
-# initialize the early_stopping object
 early_stopping = EarlyStopping(20, verbose=True)
 
 # %%
@@ -456,10 +431,6 @@ if restore == False:
         loss_train_list.append(loss_train)
         loss_valid_list.append(loss_valid)
         loss_test_list.append(loss_test)
-
-        # Save the results to tensorboard
-        # writer.add_scalar("scalar/train_loss",loss_train,epoch)
-        # writer.add_scalar("scalar/valid_loss",loss_valid,epoch)
 
         if (loss_valid < best_validation):
             best_validation = copy.deepcopy(loss_valid)
@@ -488,12 +459,8 @@ if restore == False:
     _ = plt.plot(np.array(loss_test_list), label="test")
     _ = plt.xlabel("Epoch")
     _ = plt.legend()
-    #plt.savefig(figdirectory+"Loss.png", format='png')
-    plt.show()
-# writer.close()
 
-# %% [markdown]
-# ### Load parameters
+    plt.show()
 
 # %%
 # Reload the parameters
@@ -515,8 +482,6 @@ total_params = sum(p.numel() for p in model.parameters())
 # total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
 print("The total number of parameters:", total_params)
 
-# %% [markdown]
-# ## Prediction
 
 # %%
 forecaststep = 1
@@ -532,13 +497,6 @@ testY_inversed = normalize_invert(
 
 size = testY_inversed.shape[0]
 
-# %%
-# print(testX.shape, forecast_MC.shape, testY.cpu().numpy().transpose(1,0,2).shape)
-
-# print(size,forecast_d_MC.shape, forecast_z_MC.shape, forecast_MC.shape, testY_inversed.shape,all_testForecast.shape)
-
-# np.mean(forecast_d_MC[:,-1,:,:],axis = 0).shape
-# np.mean(forecast_z_MC[:,-1,:,:],axis = 0).shape
 
 # %%
 forecast_d_MC_final = np.mean(forecast_d_MC[:, -1, :, :], axis=0)
@@ -585,9 +543,6 @@ testOriginal.shape
 # %%
 # Evaluation results
 evaluation(testForecast_mean.T, testOriginal.T, figdirectory)
-
-# %% [markdown]
-# ### Plots
 
 # %%
 my_cmap = matplotlib.cm.get_cmap('rainbow')
@@ -679,13 +634,7 @@ if dataname == 'Toy':
     _ = ax6.set_ylabel("SNLDS", fontweight='bold')
     _ = ax6.set_yticks([])
     plt.savefig(figdirectory+"Prediction.png", format='png')
-    # writer.add_figure("Prediction", fig)
     plt.show()
-
-    # print("Duration True:", duration(d_original[-size:]))
-    # print("Duration DS3M:", duration(forecast_d_MC_argmax))
-    # print("Duration SNLDS:", duration(1-SNLDS[-size:]))
-    # print("Duration DSARF:", duration(DSARF))
 
 # %%
 if dataname == 'Lorenz':
@@ -706,7 +655,6 @@ if dataname == 'Lorenz':
     categories = all_d_t_sampled_plot_test[:, 1:, :].reshape(-1)
     accuracy = sum(states.numpy().reshape(-1)
                    [1:(trainX2.shape[0]+1)] == categories)/len(categories)
-    # classification_scores(states.numpy().reshape(-1)[1:(trainX2.shape[0]+1)],categories)
     colormap = np.array(['r', 'b', 'g', 'y'])
     import matplotlib.pyplot as plt
     from mpl_toolkits.mplot3d import Axes3D
@@ -717,19 +665,6 @@ if dataname == 'Lorenz':
     plt.savefig(figdirectory+"Prediction.png", format='png')
     plt.show()
 
-    # all_d_t_sampled_plot_test,all_z_t_sampled_test,loss_test,all_d_posterior_test,all_z_posterior_mean_test = test(model,testX2,testY2,0,"test")
-    # latents = z_true[0,-testX2.shape[0]:,:]
-    # categories = all_d_t_sampled_plot_test[:,1:,:].reshape(-1)
-    # accuracy = sum(states.numpy().reshape(-1)[-testX2.shape[0]:] == categories)/len(categories)
-    # classification_scores(states.numpy().reshape(-1)[-testX.shape[1]:],categories)
-    # colormap = np.array(['r', 'b','g','y'])
-    # import matplotlib.pyplot as plt
-    # from mpl_toolkits.mplot3d import Axes3D
-    # fig = plt.figure()
-    # ax = fig.add_subplot(111, projection='3d')
-    # ax.scatter(latents[:,0],latents[:,1],latents[:,2],c=colormap[categories])
-    # plt.show();
-
 # %%
 if dataname == 'Sleep':
     size = testY_inversed.shape[0]
@@ -739,7 +674,6 @@ if dataname == 'Sleep':
                                    sharex=True, gridspec_kw={'height_ratios': [3, 0.5]})
     ax1.plot(np.arange(size*predict_dim)/predict_dim,
              testY_inversed[:, -1, :].reshape(-1), label='original')
-    # plt.plot(all_testForecast[:,1].reshape(-1))
     ax1.plot(np.arange(size*predict_dim)/predict_dim, np.mean(all_testForecast,
              axis=1).reshape(-1), color='red', label='forecasted mean')
     ax1.plot(np.arange(size*predict_dim)/predict_dim, np.quantile(all_testForecast,
@@ -750,17 +684,13 @@ if dataname == 'Sleep':
                      np.quantile(all_testForecast, 0.95, axis=1).reshape(-1),
                      np.quantile(all_testForecast, 0.05, axis=1).reshape(-1), color='grey', alpha=0.2)
     ax1.legend()
-    # ax1.plot(np.arange(size),status,color='r')
 
     sns.heatmap(1-forecast_d_MC_argmax.reshape(1, -1), linewidth=0,
                 cbar=False, alpha=1, cmap=cmap, vmin=0, vmax=1, ax=ax2)
     ax2.set_xticks(np.round(np.arange(0, size, xticks_int)))
     ax2.set_xticklabels(np.round(np.arange(0, size, xticks_int)))
     ax5 = ax2.twinx()
-    # ax5.plot(np.arange(size*predict_dim)/predict_dim,testY_inversed[:,-1,:].reshape(-1),label = 'original')
-    # sns.heatmap(np.mean(forecast_d_MC[:,-1,:,:],axis = 0).reshape(1,-1), linewidth=0.5, cbar = False,alpha=0.2, cmap = "Blues",vmin=0, vmax=1,ax=ax3)
-    # ax3.set_xticks(np.round(np.arange(0,size, xticks_int)))
-    # ax3.set_xticklabels(np.round(np.arange(0,size, xticks_int)))
+
     plt.savefig(figdirectory + 'Prediction.png', format='png')
     plt.show()
 
@@ -785,8 +715,7 @@ if dataname == 'Unemployment':
 
     _ = sns.heatmap(1-forecast_d_MC_argmax.reshape(1, -1), linewidth=0,
                     cbar=False, alpha=1, cmap=cmap, vmin=0, vmax=1, ax=ax2)
-    # _ = ax2.set_xticks(np.round(np.arange(freq/2,size, freq)));
-    # ax2.set_xticklabels(xticklables)
+
     _ = ax2.set_xticks(np.arange(9, test_len, 12))
     _ = ax2.set_xticklabels(xticklabels)
     _ = plt.xticks(rotation=0)
@@ -808,9 +737,7 @@ if dataname == 'Hangzhou':
         ax1.legend()
         sns.heatmap(1-forecast_d_MC_argmax.reshape(1, -1), linewidth=0,
                     cbar=False, alpha=1, cmap=cmap, vmin=0, vmax=1, ax=ax2)
-        # ax2.set_xticks(np.round(np.arange(freq/2,size, freq)))
-        # ax2.set_xticklabels(xticklables)
-        # plt.xticks(rotation=0)
+
         plt.suptitle('%s #%i' % (dataname, station))
         plt.savefig(figdirectory+'Station %i' % (station)+'.png', format='png')
         plt.show()
@@ -829,9 +756,7 @@ if dataname == 'Seattle':
         ax1.legend()
         sns.heatmap(forecast_d_MC_argmax.reshape(1, -1), linewidth=0,
                     cbar=False, alpha=1, cmap=cmap, vmin=0, vmax=1, ax=ax2)
-        # ax2.set_xticks(np.round(np.arange(freq/2,size, freq)))
-        # ax2.set_xticklabels(xticklables)
-        # plt.xticks(rotation=0)
+
         plt.suptitle('%s #%i' % (dataname, station))
         plt.savefig(figdirectory+'Station %i' % (station)+'.png', format='png')
         plt.show()
@@ -873,11 +798,7 @@ if dataname == 'Electricity':
         ax1.legend()
         sns.heatmap(forecast_d_MC_argmax.reshape(1, -1), linewidth=0,
                     cbar=False, alpha=1, cmap=cmap, vmin=0, vmax=1, ax=ax2)
-        # ax2.set_xticks(np.round(np.arange(freq/2,size, freq)))
-        # ax2.set_xticklabels(xticklables)
-        # plt.xticks(rotation=0)
+
         plt.suptitle('%s #%i' % (dataname, station))
         plt.savefig(figdirectory+'Station %i' % (station)+'.png', format='png')
         plt.show()
-
-# %%

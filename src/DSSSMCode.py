@@ -4,7 +4,6 @@ import torch.nn as nn
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
-# from torch.distributions import Gumbel,Bernoulli,Normal
 
 
 class DSSSM(nn.Module):
@@ -26,7 +25,6 @@ class DSSSM(nn.Module):
 
         self.Transition_initial = torch.eye(self.d_dim, device=self.device) * (
             1-0.05*self.d_dim) + torch.ones((self.d_dim, self.d_dim), device=self.device) * 0.05
-        # print(self.Transition_initial)
 
         # d prior (trainsition matrix)
         self.dprior = nn.Sequential(
@@ -115,20 +113,15 @@ class DSSSM(nn.Module):
             Transition = self.dprior(
                 self.Transition_initial)/2 + torch.eye(self.d_dim, device=self.device)/2
 
-        # Transition = self.dprior(self.Transition_initial)
-        # Transition = self.Transition_initial
-
         return Transition
 
     def forward(self, x, y):
 
         Transition = self.TransitionMatrix()
-        # print("Transition Matrix:",Transition)
 
         all_d_posterior = []  # probability vector
         all_d_t_sampled_plot = []  # 0,1
         all_d_t_sampled = []  # one-hot vector
-        # gumbelsoftmax_sampled = []
 
         all_z_posterior_mean, all_z_posterior_std = [], []
         all_z_t_sampled = []
@@ -171,15 +164,11 @@ class DSSSM(nn.Module):
         yh_concatenate_inverse = torch.flip(yh_concatenate, [0])
         output_backward, h_backward = self.rnn_backward(
             yh_concatenate_inverse, A0)
-        # print(yh_concatenate_inverse.size())
 
         for t in range(x.size(0)):
 
-            # print(t)
-
             # d prior
             d_prior = torch.mm(all_d_t_sampled[t], Transition)  # 1*d_dim
-            # print("d_prior:",d_prior)
 
             # d posterior
             d_posterior_list = []
@@ -189,7 +178,7 @@ class DSSSM(nn.Module):
                     output_backward[x.size(0)-t-1]))  # batch*2
                 d_posterior += d_posterior_list[i] * \
                     all_d_t_sampled[t][:, i:(i+1)]
-            # print(output_backward.size()) #timestep*batch*h_dim
+            # output_backward.size() is timestep*batch*h_dim
             all_d_posterior.append(d_posterior)
 
             d_t_samples = torch.distributions.Categorical(
@@ -197,25 +186,6 @@ class DSSSM(nn.Module):
             all_d_t_sampled_plot.append(d_t_samples.reshape(-1, 1))
             all_d_t_sampled.append(
                 self._one_hot_encode(d_t_samples, self.d_dim))
-
-            # select the the second one (1)'s probability
-            # print("d_t_sampled:",all_d_t_sampled[t])
-            # print("d_posterior:",d_posterior)
-
-            # sampling and reparameterization for the discrete variable
-            # gumbelsoftmax_t = self._reparameterized_category_gumbel_softmax_sample(d_posterior)
-            # gumbelsoftmax_sampled.append(gumbelsoftmax_t)
-            # all_d_t_sampled_plot.append(torch.argmax(gumbelsoftmax_t,dim=1).reshape(-1,1))
-            # all_d_t_sampled.append(self._one_hot_encode(torch.argmax(gumbelsoftmax_t,dim=1),self.d_dim))
-
-            # print(gumbelsoftmax_t.shape,torch.argmax(gumbelsoftmax_t,dim=1).shape)
-            # print(gumbelsoftmax_t)
-            # print(torch.argmax(gumbelsoftmax_t,dim=1))
-            # print("and")
-            # print(torch.distributions.Categorical(d_posterior).sample().type(torch.LongTensor).shape)
-
-            # print("gumbelsoftmax:",gumbelsoftmax_t)
-            # print(self._one_hot_encode(torch.argmax(gumbelsoftmax_t,dim=1),self.d_dim))
 
             # z prior
             z_prior_list = []
@@ -261,7 +231,6 @@ class DSSSM(nn.Module):
             z_t = self._reparameterized_normal_sample(
                 z_posterior_mean, z_posterior_std)
             all_z_t_sampled.append(z_t)
-            # print("z_t_sampled:",z_t,z_t.size())
 
             # y emission
             y_emission_list = []
@@ -292,23 +261,16 @@ class DSSSM(nn.Module):
                     self._kld_gauss(z_posterior_mean_list[i], z_posterior_std_list[i],
                                     z_prior_mean_list[i], z_prior_std_list[i]) * d_posterior[:, i:(i+1)])
 
-            # kld_category_loss += torch.sum(self._kld_category(d_posterior, d_prior))
             for i in range(self.d_dim):
                 kld_category_loss += torch.sum(self._kld_category(
                     d_posterior_list[i], Transition[i:(i+1), :]) * all_d_posterior[-2][:, i])
-#             print(self._kld_category(d_posterior_list[i], Transition[i:(i+1),:]).shape, d_posterior_list[i].shape,Transition[i:(i+1),:].shape,all_d_posterior[-2][:,i].shape)
-#             print(self._kld_category(d_posterior_list[i], Transition[i:(i+1),:]))
-            # print(all_d_posterior[-2])
 
-            # nll_loss += torch.sum(self._nll_gauss(y_emission_mean, y_emission_std, y[t]))
             for i in range(self.d_dim):
                 nll_loss += torch.sum(self._nll_gauss(
                     y_emission_mean_list[i], y_emission_std_list[i], y[t])*d_posterior[:, i:(i+1)])
 
         return kld_gaussian_loss, kld_category_loss, nll_loss, (all_z_posterior_mean, all_z_posterior_std), (all_y_emission_mean, all_y_emission_std), all_d_t_sampled_plot, all_z_t_sampled, all_d_posterior, all_d_t_sampled
 
-    # d_t_sampled_plot (which status)
-    # all_d_posterior (probability)
 
     def _forecastingMultiStep(self, x, y, step=1, S=1):
 
@@ -338,21 +300,17 @@ class DSSSM(nn.Module):
 
                     # d prior
                     d_prior = torch.mm(all_d_t_sampled[-1], Transition)
-                    # print("d_prior:",d_prior)
 
                     # sample d from the prior
                     samples = torch.distributions.Categorical(
                         d_prior).sample().type(torch.LongTensor)
-                    # torch.distributions.Bernoulli(d_prior[:,1]).sample().type(torch.LongTensor)
                     d_t_sampled = self._one_hot_encode(samples, self.d_dim)
                     all_d_t_sampled_plot.append(
                         samples.reshape(-1, 1).to(self.device))
                     all_d_t_sampled.append(d_t_sampled)
                     all_d_posterior.append(d_prior)
-                    # print("d_t_sampled:",d_t_sampled)
 
                     # z prior
-                    # print(h_forward.squeeze().size(),output_forward[t].size()
                     z_prior_list = []
                     z_prior_mean_list = []
                     z_prior_std_list = []
@@ -423,13 +381,10 @@ class DSSSM(nn.Module):
 
     def _reparameterized_category_gumbel_softmax_sample(self, logits):
         """using std to sample"""
-        # print(self.temperature)
         if self.temperature > 0.01:
             self.temperature = self.temperature/1.001
         else:
             self.temperature = 0.01
-        # print(logits.size())
-        # print(torch.distributions.Gumbel(torch.tensor([0.0]), torch.tensor([1.0])).sample(logits.size()).squeeze().size())
         y = torch.log(logits) + torch.distributions.Gumbel(torch.tensor(
             [0.0], device=self.device), torch.tensor([1.0], device=self.device)).sample(logits.size()).squeeze()
         return torch.nn.functional.softmax((y / self.temperature), dim=1)
@@ -444,8 +399,6 @@ class DSSSM(nn.Module):
         return 0.5 * kld_element
 
     def _kld_category(self, d_posterior, d_prior):
-        # print(d_posterior,d_prior)
-        # print(torch.div(d_posterior,d_prior))
         # Already sum up
         return torch.sum(torch.mul(torch.log(torch.div(d_posterior, d_prior)), d_posterior), axis=1)
 
@@ -477,7 +430,6 @@ def train(model, optimizer, trainX, trainY, epoch, batch_size, n_epochs, status=
 
     for batch in range(0, trainX.size(1), batch_size):
 
-        # for batch in np.random.choice(range(trainX.size(1)),trainX.size(1), replace=False):
         batchX = trainX[:, batch:(batch+batch_size), :]
         batchY = trainY[:, batch:(batch+batch_size), :]
         kld_gaussian_loss, kld_category_loss, nll_loss, _, _, _, _, _, _ = model(
@@ -492,7 +444,6 @@ def train(model, optimizer, trainX, trainY, epoch, batch_size, n_epochs, status=
         # grad norm clipping, only in pytorch version >= 1.10
         if (batch == 0) & (epoch % 10 == 0):
             plot_grad_flow(model.named_parameters())
-        # nn.utils.clip_grad_norm_(model.parameters(), 1)
         optimizer.step()
 
     all_d_t_sampled_plot, all_z_t_sampled, loss, all_d_posterior, all_z_posterior_mean = test(
@@ -552,7 +503,6 @@ def plot_grad_flow(named_parameters):
     plt.hlines(0, 0, len(ave_grads)+1, lw=2, color="k")
     plt.xticks(range(0, len(ave_grads), 1), layers, rotation="vertical")
     plt.xlim(left=0, right=len(ave_grads))
-    # plt.ylim(bottom = -0.001, top=1) # zoom in on the lower gradient regions
     plt.xlabel("Layers")
     plt.ylabel("average gradient")
     plt.title("Gradient flow")

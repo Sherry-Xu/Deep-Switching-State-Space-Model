@@ -5,3 +5,4 @@ scikit-learn
 scipy
 seaborn
 torch==2.6.0
+# conda install pytorch, if you are using macOS

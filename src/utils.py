@@ -11,7 +11,6 @@ import torch
 
 # Normalize dataset
 
-
 def normalize_moments(dataset):
     # dataset is 1-d
     moments = np.zeros(2)
@@ -51,7 +50,6 @@ def minmax_invert(dataset, moments):
 
 # convert an array of values (1-d time series) into a dataset matrix from
 
-
 def create_dataset(dataset, look_back=1, predict_len=1):
     dataX, dataY = [], []
     for i in range(0, len(dataset)-look_back, predict_len):  # predict_len #look_back
@@ -63,7 +61,6 @@ def create_dataset(dataset, look_back=1, predict_len=1):
 
 # convert an array of values (1-d time series) into a dataset matrix from
 
-
 def create_dataset2(dataset, look_back=1):
     dataX, dataY = [], []
     for i in range(0, dataset.shape[0]-look_back):  # predict_len #look_back
@@ -72,16 +69,6 @@ def create_dataset2(dataset, look_back=1):
         dataX.append(a)
         dataY.append(b)
     return np.array(dataX), np.array(dataY)
-
-# # convert an array of values into a dataset matrix
-# def create_dataset_supervised(dataset, look_back=1,predict_len=1):
-#     dataX, dataY = [], []
-#     for i in range(0,len(dataset)-look_back,predict_len):
-#             a = dataset[i:(i+look_back), :]
-#             b = dataset[(i+1):(i+look_back+1),:]
-#             dataX.append(a)
-#             dataY.append(b)
-#     return np.array(dataX), np.array(dataY)
 
 
 def evaluation(predict, original, figdirectory=None):
@@ -106,17 +93,6 @@ def evaluation(predict, original, figdirectory=None):
     return results
 
 
-# def prediction(model,testX):
-#     testForecast,testForecast_std,all_d,all_z,all_d_prior,all_z_prior_mean = model.forecasting(testX)
-#     all_testForecast = np.array(testForecast.detach().cpu().numpy().squeeze())
-#     all_testForecast_std = np.array(testForecast_std.detach().cpu().numpy().squeeze())
-#     all_d = np.array([all_d[i].detach().numpy() for i in range(len(all_d))]).transpose(1,0)
-#     all_z = np.array([all_z[i].detach().cpu().numpy() for i in range(len(all_z))]).transpose(1,0,2)
-#     all_d_prior = np.array([all_d_prior[i].detach().cpu().numpy() for i in range(len(all_d_prior))]).transpose(1,0)
-#     all_z_prior_mean  = np.array([all_z_prior_mean[i].detach().cpu().numpy() for i in range(len(all_z_prior_mean))]).transpose(1,0,2)
-#     return all_testForecast,all_testForecast_std,all_d,all_z,all_d_prior,all_z_prior_mean
-
-
 def PosteriorPlot(i, all_d_t_sampled, all_z_t_sampled, all_d_posterior, all_z_posterior_mean, plot_data, colormap, timestep, predict_dim, colorbar=True):
 
     # Transform the dataset to be the size of (batch,timestep*inputdim)
@@ -132,16 +108,12 @@ def PosteriorPlot(i, all_d_t_sampled, all_z_t_sampled, all_d_posterior, all_z_po
     ax2 = sns.heatmap(all_d_t_sampled[i, :, :].reshape(1, -1), linewidth=0.5,
                       cbar=colorbar, alpha=0.2, cmap=colormap, vmin=0, vmax=1)
     ax1.legend()
-    # ax1.set_title("y")
 
     ax3.plot(np.arange(len(all_z_t_sampled[i, :, :]))+1/2, all_z_t_sampled[i, :, :],
              alpha=1, color='#ff7f0e', label="Posterior sampled z")
     ax4 = ax3.twinx()
     ax4 = sns.heatmap(all_d_t_sampled[i, :, :].reshape(1, -1), linewidth=0.5, cbar=colorbar,
                       alpha=0.2, cmap=colormap, vmin=0, vmax=1)
-    # ax3.legend()
-
-    # fig.tight_layout()
 
     plt.suptitle("Posterior samples")
     plt.show()
@@ -155,16 +127,13 @@ def PosteriorPlot(i, all_d_t_sampled, all_z_t_sampled, all_d_posterior, all_z_po
     ax2 = sns.heatmap(all_d_posterior[i, :, 1].reshape(1, -1), linewidth=0.5, cbar=colorbar,
                       alpha=0.2, cmap=colormap, vmin=0, vmax=1)
     ax1.legend()
-    # ax1.set_title("y")
 
     ax3.plot(np.arange(len(all_z_posterior_mean[i, :, :]))+1/2, all_z_posterior_mean[i, :, :],
              alpha=1, color='#ff7f0e', label="Posterior mean of z")
     ax4 = ax3.twinx()
     ax4 = sns.heatmap(all_d_posterior[i, :, 1].reshape(1, -1), linewidth=0.5, cbar=colorbar,
                       alpha=0.2, cmap=colormap, vmin=0, vmax=1)
-    # ax3.legend()
-    # ax3.set_title("Posterior mean z")
-    # fig.tight_layout()
+
     plt.suptitle("Posterior mean")
     plt.show()
 
@@ -222,7 +191,7 @@ def PredictionPriorPlot(i, all_testForecast, all_testForecast_std, all_d_prior_s
     fig.tight_layout()
     plt.show()
 
-    #############
+    ##########################
 
     fig, (ax1, ax3) = plt.subplots(2, 1, figsize=(20, 6))
 
@@ -320,9 +289,7 @@ def PosteriorPredictionPlot(i, plot_data, all_d_t_sampled, all_z_t_sampled, all_
 
     fig.tight_layout()
     plt.show()
-
-    # print(all_d_t_sampled[i,:],all_d_posterior[i,:])
-
+    
 
 def duration(status):
     Ss = copy.deepcopy(status)
