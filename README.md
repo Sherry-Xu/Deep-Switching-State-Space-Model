@@ -69,7 +69,7 @@ python main.py -p Toy --train
 
 It will save the best checkpoint (best.tar) to `results/checkpoints/<dataset_name>/`.
 
-## Key Scripts
+## Script Descriptions
 
 - **`main.py`**  
   Parses arguments (`-p` for dataset, `--train` for training), loads data, trains or loads a model, and generates result plots.
