@@ -54,7 +54,7 @@ Deep-Switching-State-Space-Model/
 └─ requirements.txt
 ```
 
-To reproduce results, download the checkpoints folder from [this link](https://www.dropbox.com/scl/fo/fytbaft45895y3057r8dp/AIh1K1ZKmI3C8nUuRgZ9wbY?rlkey=vovaus04jfeiqk2gqkw3nnpbb&dl=0), unzip it, and place `checkpoints/` folder under `results/`.
+To reproduce results, download the checkpoints folder from [this link](https://www.dropbox.com/scl/fi/uhqpjmubfcr5wr102nxzr/checkpoints.zip?rlkey=2p6xabwl7e3325eaxefc9slbj&dl=0), unzip it, and place `checkpoints/` folder under `results/`.
 
 ## Usage
 
