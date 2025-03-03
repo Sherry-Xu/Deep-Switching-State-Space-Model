@@ -63,12 +63,12 @@ From the command line, run:
 python main.py -p Electricity
 ```
 - Replace Electricity with other dataset names (e.g., Toy, Lorenz, Sleep, Unemployment, Hangzhou, Seattle, Pacific) to test those datasets. 
-- By default, the script loads the pre-trained checkpoint for inference. Note: due to the fact that the forecasting is generated via Monte Carlo method, the produced results will be slightly different with different runs.
+- By default, the script loads the pre-trained checkpoint for inference. 
+- **Note**: Due to that the forecasting results is generated via Monte Carlo method, the produced results will be slightly different with different runs.
 - If you want to retrain from scratch, add --train, for example:
 ```bash
 python main.py -p Pacific --train
 ```
-
 It will save the best checkpoint (best.tar) to `results/checkpoints/<dataset_name>/`.
 
 ## Script Descriptions
