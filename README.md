@@ -9,17 +9,19 @@ This repository provides a PyTorch implementation of DS^3M, which incorporates d
 
 ## Environment Setup
 
-1. **Create and activate a conda environment** (you may adjust the Python version as needed):
+1. Create and activate a conda environment:
    ```bash
    conda create -n ds3m_env python=3.10
    conda activate ds3m_env
+   ```
 
-	2.	Install required packages:
+2.	Install required packages:
 
 pip install -r requirements.txt
 
-Repository Structure
+**Repository Structure**
 
+```bash
 Deep-Switching-State-Space-Model/
 │
 ├─ data/
@@ -50,6 +52,7 @@ Deep-Switching-State-Space-Model/
 ├─ main.py           
 ├─ README.md
 └─ requirements.txt
+```
 
 To reproduce results, download the checkpoints from [this link](https://www.dropbox.com/scl/fo/fytbaft45895y3057r8dp/AIh1K1ZKmI3C8nUuRgZ9wbY?rlkey=vovaus04jfeiqk2gqkw3nnpbb&dl=0), unzip them, and place them under `results/checkpoints/`.
 
