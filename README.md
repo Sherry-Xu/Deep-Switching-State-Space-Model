@@ -48,8 +48,9 @@ Deep-Switching-State-Space-Model/
 ├─ src/
 │   ├─ DSSSMCode.py 
 │   └─ utils.py      
-├─ main.py           
+├─ LICENSE           
 ├─ README.md
+├─ main.py
 └─ requirements.txt
 ```
 
