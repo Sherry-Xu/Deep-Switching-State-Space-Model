@@ -18,7 +18,7 @@ This repository provides a PyTorch implementation of DS^3M, which incorporates d
     pip install -r requirements.txt
 ```
 
-**Repository Structure**
+## Repository Structure
 
 ```bash
 Deep-Switching-State-Space-Model/
@@ -55,7 +55,7 @@ Deep-Switching-State-Space-Model/
 
 To reproduce results, download the checkpoints from [this link](https://www.dropbox.com/scl/fo/fytbaft45895y3057r8dp/AIh1K1ZKmI3C8nUuRgZ9wbY?rlkey=vovaus04jfeiqk2gqkw3nnpbb&dl=0), unzip them, and place them under `results/checkpoints/`.
 
-3. Usage
+## Usage
 
 From the command line, run:
 ```bash
@@ -77,27 +77,32 @@ Provides data normalization (normalize_fit, normalize_invert), dataset creation 
 
 **Figures**
 
-All generated figures are saved to results/figures/. The following mappings show how each figure corresponds to the paper:
-	•	Figure 2(a): Toy_Prediction.png
-	•	Figure 2(b): Lorenz_Prediction.png
-	•	Figure 3(a): Sleep_Prediction.png
-	•	Figure 3(b): Unemployment_Prediction.png
-	•	Figure 3(c): Hangzhou_Station 0.png
-	•	Figure 3(d): Hangzhou_Station 40.png
-	•	Figure 3(e): Seattle_Station 0.png
-	•	Figure 3(f): Seattle_Station 322.png
-	•	Figure 3(g): Pacific_Station 0.png
-	•	Figure 3(h): Pacific_Station 840.png
-	•	Figure 3(i): Electricity_Station 0.png
-	•	Figure 3(j): Electricity_Station 24.png
+All generated figures are saved to `results/figures/`. The following mappings show how each figure corresponds to the paper:
 
-**Citation**
+- **Figure 2(a)**: `Toy_Prediction.png`
+- **Figure 2(b)**: `Lorenz_Prediction.png`
+- **Figure 3(a)**: `Sleep_Prediction.png`
+- **Figure 3(b)**: `Unemployment_Prediction.png`
+- **Figure 3(c)**: `Hangzhou_Station 0.png`
+- **Figure 3(d)**: `Hangzhou_Station 40.png`
+- **Figure 3(e)**: `Seattle_Station 0.png`
+- **Figure 3(f)**: `Seattle_Station 322.png`
+- **Figure 3(g)**: `Pacific_Station 0.png`
+- **Figure 3(h)**: `Pacific_Station 840.png`
+- **Figure 3(i)**: `Electricity_Station 0.png`
+- **Figure 3(j)**: `Electricity_Station 24.png`
+
+---
+
+## Citation
 
 If you find this code useful, please cite:
 
+```bibtex
 @article{xu2021deep,
   title={Deep Switching State Space Model (DS \$^3\$ M) for Nonlinear Time Series Forecasting with Regime Switching},
   author={Xu, Xiuqin and Peng, Hanqiu and Chen, Ying},
   journal={arXiv preprint arXiv:2106.02329},
   year={2021}
 }
+```
