@@ -113,3 +113,9 @@ If you find this code useful, please cite:
   year={2021}
 }
 ```
+
+## Reproducibility Package Information
+
+**Assembled Date:** March 4, 2025  
+**Reproducibility Package Author:** Xiuqin Xu  
+**Contact Email:** [xiuqin.sherry.xu@gmail.com](mailto:xiuqin.sherry.xu@gmail.com)
