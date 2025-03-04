@@ -64,7 +64,7 @@ To reproduce results:
 python main.py -p Electricity
 ```
 - Replace Electricity with other dataset names (e.g., Toy, Lorenz, Sleep, Unemployment, Hangzhou, Seattle, Pacific) to test those datasets. 
-- **Note**: Due to that the forecasting results is generated via Monte Carlo method, the produced results will be slightly different with different runs.
+
 - By default, the script loads the pre-trained checkpoint for inference. If you want to retrain from scratch, add --train, for example:
 ```bash
 python main.py -p Pacific --train
@@ -98,6 +98,8 @@ All generated figures are saved to `results/figures/`. The following mappings sh
 - **Figure 3(h)**: `Pacific_Station 840.png`
 - **Figure 3(i)**: `Electricity_Station 0.png`
 - **Figure 3(j)**: `Electricity_Station 24.png`
+
+**Note**: Due to that the forecasting results is generated via Monte Carlo method, the produced results will be slightly different with different runs.
 
 ## Citation
 
