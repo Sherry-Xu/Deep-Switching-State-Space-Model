@@ -55,9 +55,11 @@ Deep-Switching-State-Space-Model/
 ```
 
 ## Usage
-To reproduce results, download the checkpoints folder from [this link](https://www.dropbox.com/scl/fi/uhqpjmubfcr5wr102nxzr/checkpoints.zip?rlkey=2p6xabwl7e3325eaxefc9slbj&dl=0), unzip it, and place `checkpoints/` folder under `results/`.
+To reproduce results
 
-From the command line, run:
+1. Download the checkpoints folder from [this link](https://www.dropbox.com/scl/fi/uhqpjmubfcr5wr102nxzr/checkpoints.zip?rlkey=2p6xabwl7e3325eaxefc9slbj&dl=0), unzip it, and place `checkpoints/` folder under `results/`.
+
+2. Run in the command line:
 ```bash
 python main.py -p Electricity
 ```
@@ -68,7 +70,7 @@ python main.py -p Electricity
 ```bash
 python main.py -p Pacific --train
 ```
-It will save the best checkpoint (best.tar) to `results/checkpoints/<dataset_name>/`.
+It will save the best checkpoint to `results/checkpoints/<dataset_name>/`.
 
 ## Script Descriptions
 
