@@ -55,7 +55,7 @@ Deep-Switching-State-Space-Model/
 ```
 
 ## Usage
-To reproduce results
+To reproduce results:
 
 1. Download the checkpoints folder from [this link](https://www.dropbox.com/scl/fi/uhqpjmubfcr5wr102nxzr/checkpoints.zip?rlkey=2p6xabwl7e3325eaxefc9slbj&dl=0), unzip it, and place `checkpoints/` folder under `results/`.
 
@@ -64,9 +64,8 @@ To reproduce results
 python main.py -p Electricity
 ```
 - Replace Electricity with other dataset names (e.g., Toy, Lorenz, Sleep, Unemployment, Hangzhou, Seattle, Pacific) to test those datasets. 
-- By default, the script loads the pre-trained checkpoint for inference. 
 - **Note**: Due to that the forecasting results is generated via Monte Carlo method, the produced results will be slightly different with different runs.
-- If you want to retrain from scratch, add --train, for example:
+- By default, the script loads the pre-trained checkpoint for inference. If you want to retrain from scratch, add --train, for example:
 ```bash
 python main.py -p Pacific --train
 ```
