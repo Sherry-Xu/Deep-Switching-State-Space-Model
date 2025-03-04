@@ -117,5 +117,5 @@ If you find this code useful, please cite:
 ## Reproducibility Package Information
 
 **Assembled Date:** March 4, 2025  
-**Reproducibility Package Author:** Xiuqin Xu  
+**Package Author:** Xiuqin Xu and Hanqiu Peng
 **Contact Email:** [xiuqin.sherry.xu@gmail.com](mailto:xiuqin.sherry.xu@gmail.com)
