@@ -101,7 +101,7 @@ All generated figures are saved to `results/figures/`. The following mappings sh
 - **Figure 3(i)**: `Electricity_Station 0.png`
 - **Figure 3(j)**: `Electricity_Station 24.png`
 
-**Note**: Due to that the forecasting results is generated via Monte Carlo method, the produced results will be slightly different with different runs.
+> **Note**: Due to that the forecasting results is generated via Monte Carlo method, the produced results will be slightly different with different runs.
 
 ## Citation
 
