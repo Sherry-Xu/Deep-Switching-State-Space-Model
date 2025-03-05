@@ -1,9 +1,9 @@
 # Deep-Switching-State-Space-Model
 
-## [Deep Switching State Space Model (DS^3M)](https://arxiv.org/abs/2106.02329)
+## [Deep Switching State Space Model (DS$^{3}$M) for Nonlinear Time Series Forecasting with Regime Switching](https://arxiv.org/abs/2106.02329)
 Authors: Xiuqin Xu, Hanqiu Peng, Ying Chen
 
-This repository provides a PyTorch implementation of DS^3M, which incorporates discrete and continuous latent variables to capture possible regime-switching behavior in time series. The code covers model training, inference, and visualization across multiple real-world datasets.
+This repository provides a PyTorch implementation of DS$^{3}$M, which incorporates discrete and continuous latent variables to capture possible regime-switching behavior in time series. The code covers model training, inference, and visualization across multiple real-world datasets.
 
 ## Environment Setup
 
@@ -64,6 +64,8 @@ To reproduce results:
 python main.py -p Electricity
 ```
 - Replace Electricity with other dataset names (e.g., Toy, Lorenz, Sleep, Unemployment, Hangzhou, Seattle, Pacific) to test those datasets. 
+
+> **Note**: The specific source and description of the data can be found in the paper, Section 4.1 (**Simulations**) and Section 4.2 (**Real data analysis**).
 
 - By default, the script loads the pre-trained checkpoint for inference. If you want to retrain from scratch, add --train, for example:
 ```bash
