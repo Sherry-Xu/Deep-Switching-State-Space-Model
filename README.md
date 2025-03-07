@@ -1,9 +1,9 @@
 # Deep-Switching-State-Space-Model
 
-## [Deep Switching State Space Model (DS$^{3}$M) for Nonlinear Time Series Forecasting with Regime Switching](https://arxiv.org/abs/2106.02329)
+## [Deep Switching State Space Model (DS<sup>3</sup>M) for Nonlinear Time Series Forecasting with Regime Switching](https://arxiv.org/abs/2106.02329)
 Authors: Xiuqin Xu, Hanqiu Peng, Ying Chen
 
-This repository provides a PyTorch implementation of DS$^{3}$M, which incorporates discrete and continuous latent variables to capture possible regime-switching behavior in time series. The code covers model training, inference, and visualization across multiple real-world datasets.
+This repository provides a PyTorch implementation of DS<sup>3</sup>M, which incorporates discrete and continuous latent variables to capture possible regime-switching behavior in time series. The code covers model training, inference, and visualization across multiple real-world datasets.
 
 ## Environment Setup
 
@@ -79,7 +79,7 @@ It will save the best checkpoint to `results/checkpoints/<dataset_name>/`.
   Parses arguments (`-p` for dataset, `--train` for training), loads data, trains or loads a model, and generates result plots.
 
 - **`src/DSSSMCode.py`**  
-  Defines the DS^3M model (discrete + continuous latent variables, RNN encoders, etc.) using PyTorch. Handles forward passes, multi-step forecasting, and loss computations (KL divergence, likelihood, etc.).
+  Defines the DS<sup>3</sup>M model (discrete + continuous latent variables, RNN encoders, etc.) using PyTorch. Handles forward passes, multi-step forecasting, and loss computations (KL divergence, likelihood, etc.).
 
 - **`src/utils.py`**  
   Provides data normalization (`normalize_fit`, `normalize_invert`), dataset creation (`create_dataset2`), evaluation metrics (RMSE, MAPE), classification scores, and plotting utilities.
@@ -108,11 +108,14 @@ All generated figures are saved to `results/figures/`. The following mappings sh
 If you find this code useful, please cite:
 
 ```bibtex
-@article{xu2021deep,
-  title={Deep Switching State Space Model (DS \$^3\$ M) for Nonlinear Time Series Forecasting with Regime Switching},
-  author={Xu, Xiuqin and Peng, Hanqiu and Chen, Ying},
-  journal={arXiv preprint arXiv:2106.02329},
-  year={2021}
+@misc{xu2025deepswitchingstatespace,
+      title={Deep Switching State Space Model (DS$^3$M) for Nonlinear Time Series Forecasting with Regime Switching}, 
+      author={Xiuqin Xu and Hanqiu Peng and Ying Chen},
+      year={2025},
+      eprint={2106.02329},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2106.02329}, 
 }
 ```
 
