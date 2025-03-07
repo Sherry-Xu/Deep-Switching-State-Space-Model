@@ -1,0 +1,271 @@
+﻿Type,Problem,Metrics,Method,value
+,Toy,1 RMSE,1 DS3M,14.23
+,Toy,2 Duration for dt=1,1 DS3M,8.93
+,Toy,3 Duration for dt=0,1 DS3M,8.75
+,Toy,4 Accuracy (%),1 DS3M,0.8
+,Toy,5 F1 score,1 DS3M,0.8
+,Toy,6 Inference - Accuracy (%),1 DS3M,0.8
+,Toy,7 Inference - F1 score,1 DS3M,0.83
+,Toy,1 RMSE,1 DS3M,14.78
+,Toy,2 Duration for dt=1,1 DS3M,5.125
+,Toy,3 Duration for dt=0,1 DS3M,7.05
+,Toy,4 Accuracy (%),1 DS3M,0.754
+,Toy,5 F1 score,1 DS3M,0.754
+,Toy,6 Inference - Accuracy (%),1 DS3M,0.848
+,Toy,7 Inference - F1 score,1 DS3M,0.828
+,Toy,1 RMSE,1 DS3M,14.96
+,Toy,2 Duration for dt=1,1 DS3M,6.93
+,Toy,3 Duration for dt=0,1 DS3M,4.95
+,Toy,4 Accuracy (%),1 DS3M,0.754
+,Toy,5 F1 score,1 DS3M,0.755
+,Toy,6 Inference - Accuracy (%),1 DS3M,0.854
+,Toy,7 Inference - F1 score,1 DS3M,0.837
+,Toy,1 RMSE,1 DS3M,14.17
+,Toy,2 Duration for dt=1,1 DS3M,8.89
+,Toy,3 Duration for dt=0,1 DS3M,8.79
+,Toy,4 Accuracy (%),1 DS3M,0.82
+,Toy,5 F1 score,1 DS3M,0.8
+,Toy,6 Inference - Accuracy (%),1 DS3M,0.844
+,Toy,7 Inference - F1 score,1 DS3M,0.824
+,Toy,1 RMSE,1 DS3M,14.72
+,Toy,2 Duration for dt=1,1 DS3M,7.67
+,Toy,3 Duration for dt=0,1 DS3M,8.63
+,Toy,4 Accuracy (%),1 DS3M,0.792
+,Toy,5 F1 score,1 DS3M,0.782
+,Toy,6 Inference - Accuracy (%),1 DS3M,0.852
+,Toy,7 Inference - F1 score,1 DS3M,0.834
+,Toy,1 RMSE,2 SNLDS,16.58
+,Toy,2 Duration for dt=1,2 SNLDS,1.28
+,Toy,3 Duration for dt=0,2 SNLDS,1.94
+,Toy,4 Accuracy (%),2 SNLDS,0.5
+,Toy,5 F1 score,2 SNLDS,0.55
+,Toy,6 Inference - Accuracy (%),2 SNLDS,0.7
+,Toy,7 Inference - F1 score,2 SNLDS,0.54
+,Toy,1 RMSE,2 SNLDS,16.532
+,Toy,2 Duration for dt=1,2 SNLDS,1.2839
+,Toy,3 Duration for dt=0,2 SNLDS,1.9355
+,Toy,4 Accuracy (%),2 SNLDS,0.542
+,Toy,5 F1 score,2 SNLDS,0.5483
+,Toy,6 Inference - Accuracy (%),2 SNLDS,0.692
+,Toy,7 Inference - F1 score,2 SNLDS,0.5444
+,Toy,1 RMSE,2 SNLDS,16.521
+,Toy,2 Duration for dt=1,2 SNLDS,1.2821
+,Toy,3 Duration for dt=0,2 SNLDS,1.9167
+,Toy,4 Accuracy (%),2 SNLDS,0.544
+,Toy,5 F1 score,2 SNLDS,0.5494
+,Toy,6 Inference - Accuracy (%),2 SNLDS,0.692
+,Toy,7 Inference - F1 score,2 SNLDS,0.5444
+,Toy,1 RMSE,2 SNLDS,16.544
+,Toy,2 Duration for dt=1,2 SNLDS,1.2821
+,Toy,3 Duration for dt=0,2 SNLDS,1.9167
+,Toy,4 Accuracy (%),2 SNLDS,0.544
+,Toy,5 F1 score,2 SNLDS,0.5494
+,Toy,6 Inference - Accuracy (%),2 SNLDS,0.69
+,Toy,7 Inference - F1 score,2 SNLDS,0.5427
+,Toy,1 RMSE,2 SNLDS,16.526
+,Toy,2 Duration for dt=1,2 SNLDS,1.2821
+,Toy,3 Duration for dt=0,2 SNLDS,1.9167
+,Toy,4 Accuracy (%),2 SNLDS,0.544
+,Toy,5 F1 score,2 SNLDS,0.5494
+,Toy,6 Inference - Accuracy (%),2 SNLDS,0.696
+,Toy,7 Inference - F1 score,2 SNLDS,0.5476
+,Toy,1 RMSE,3 DSARF,15.44
+,Toy,2 Duration for dt=1,3 DSARF,3.59
+,Toy,3 Duration for dt=0,3 DSARF,2.22
+,Toy,4 Accuracy (%),3 DSARF,0.7
+,Toy,5 F1 score,3 DSARF,0.72
+,Toy,6 Inference - Accuracy (%),3 DSARF,0.8
+,Toy,7 Inference - F1 score,3 DSARF,0.78
+,Toy,1 RMSE,3 DSARF,15.19
+,Toy,2 Duration for dt=1,3 DSARF,3.91
+,Toy,3 Duration for dt=0,3 DSARF,3.62
+,Toy,4 Accuracy (%),3 DSARF,0.79
+,Toy,5 F1 score,3 DSARF,0.773
+,Toy,6 Inference - Accuracy (%),3 DSARF,0.84
+,Toy,7 Inference - F1 score,3 DSARF,0.825
+,Toy,1 RMSE,3 DSARF,15.08
+,Toy,2 Duration for dt=1,3 DSARF,4.21
+,Toy,3 Duration for dt=0,3 DSARF,3.87
+,Toy,4 Accuracy (%),3 DSARF,0.795
+,Toy,5 F1 score,3 DSARF,0.781
+,Toy,6 Inference - Accuracy (%),3 DSARF,0.848
+,Toy,7 Inference - F1 score,3 DSARF,0.835
+,Toy,1 RMSE,3 DSARF,15.2
+,Toy,2 Duration for dt=1,3 DSARF,4.52
+,Toy,3 Duration for dt=0,3 DSARF,4.4
+,Toy,4 Accuracy (%),3 DSARF,0.811
+,Toy,5 F1 score,3 DSARF,0.794
+,Toy,6 Inference - Accuracy (%),3 DSARF,0.86
+,Toy,7 Inference - F1 score,3 DSARF,0.845
+,Toy,1 RMSE,3 DSARF,15.31
+,Toy,2 Duration for dt=1,3 DSARF,3.5
+,Toy,3 Duration for dt=0,3 DSARF,2.26
+,Toy,4 Accuracy (%),3 DSARF,0.715
+,Toy,5 F1 score,3 DSARF,0.719
+,Toy,6 Inference - Accuracy (%),3 DSARF,0.754
+,Toy,7 Inference - F1 score,3 DSARF,0.754
+,Lorenz,1 RMSE,1 DS3M,0.193
+,Lorenz,2 Accuracy (%),1 DS3M,0.966
+,Lorenz,3 F1 score,1 DS3M,0.96
+,Lorenz,4 Inference - Accuracy (%),1 DS3M,0.981
+,Lorenz,5 Inference - F1 score,1 DS3M,0.978
+,Lorenz,1 RMSE,1 DS3M,0.1648
+,Lorenz,2 Accuracy (%),1 DS3M,0.852
+,Lorenz,3 F1 score,1 DS3M,0.793
+,Lorenz,4 Inference - Accuracy (%),1 DS3M,0.928
+,Lorenz,5 Inference - F1 score,1 DS3M,0.91
+,Lorenz,1 RMSE,1 DS3M,0.1498
+,Lorenz,2 Accuracy (%),1 DS3M,0.957
+,Lorenz,3 F1 score,1 DS3M,0.951
+,Lorenz,4 Inference - Accuracy (%),1 DS3M,0.958
+,Lorenz,5 Inference - F1 score,1 DS3M,0.952
+,Lorenz,1 RMSE,1 DS3M,0.1756
+,Lorenz,2 Accuracy (%),1 DS3M,0.777
+,Lorenz,3 F1 score,1 DS3M,0.652
+,Lorenz,4 Inference - Accuracy (%),1 DS3M,0.81
+,Lorenz,5 Inference - F1 score,1 DS3M,0.718
+,Lorenz,1 RMSE,1 DS3M,0.1552
+,Lorenz,2 Accuracy (%),1 DS3M,0.858
+,Lorenz,3 F1 score,1 DS3M,0.831
+,Lorenz,4 Inference - Accuracy (%),1 DS3M,0.878
+,Lorenz,5 Inference - F1 score,1 DS3M,0.858
+,Lorenz,1 RMSE,2 SNLDS,0.25
+,Lorenz,2 Accuracy (%),2 SNLDS,0.7
+,Lorenz,3 F1 score,2 SNLDS,0.73
+,Lorenz,4 Inference - Accuracy (%),2 SNLDS,0.978
+,Lorenz,5 Inference - F1 score,2 SNLDS,0.97
+,Lorenz,1 RMSE,2 SNLDS,0.1887
+,Lorenz,2 Accuracy (%),2 SNLDS,0.631
+,Lorenz,3 F1 score,2 SNLDS,0.6448
+,Lorenz,4 Inference - Accuracy (%),2 SNLDS,0.533
+,Lorenz,5 Inference - F1 score,2 SNLDS,0.6432
+,Lorenz,1 RMSE,2 SNLDS,0.3169
+,Lorenz,2 Accuracy (%),2 SNLDS,0.619
+,Lorenz,3 F1 score,2 SNLDS,0.631
+,Lorenz,4 Inference - Accuracy (%),2 SNLDS,0.852
+,Lorenz,5 Inference - F1 score,2 SNLDS,0.794
+,Lorenz,1 RMSE,2 SNLDS,0.2243
+,Lorenz,2 Accuracy (%),2 SNLDS,0.513
+,Lorenz,3 F1 score,2 SNLDS,0.4746
+,Lorenz,4 Inference - Accuracy (%),2 SNLDS,0.646
+,Lorenz,5 Inference - F1 score,2 SNLDS,0.3086
+,Lorenz,1 RMSE,2 SNLDS,0.146
+,Lorenz,2 Accuracy (%),2 SNLDS,0.624
+,Lorenz,3 F1 score,2 SNLDS,0.525
+,Lorenz,4 Inference - Accuracy (%),2 SNLDS,0.709
+,Lorenz,5 Inference - F1 score,2 SNLDS,0.678
+,Lorenz,1 RMSE,3 DSARF,0.03
+,Lorenz,2 Accuracy (%),3 DSARF,0.848
+,Lorenz,3 F1 score,3 DSARF,0.842
+,Lorenz,4 Inference - Accuracy (%),3 DSARF,0.853
+,Lorenz,5 Inference - F1 score,3 DSARF,0.847
+,Lorenz,1 RMSE,3 DSARF,0.03
+,Lorenz,2 Accuracy (%),3 DSARF,0.896
+,Lorenz,3 F1 score,3 DSARF,0.881
+,Lorenz,4 Inference - Accuracy (%),3 DSARF,0.895
+,Lorenz,5 Inference - F1 score,3 DSARF,0.88
+,Lorenz,1 RMSE,3 DSARF,0.03
+,Lorenz,2 Accuracy (%),3 DSARF,0.757
+,Lorenz,3 F1 score,3 DSARF,0.622
+,Lorenz,4 Inference - Accuracy (%),3 DSARF,0.762
+,Lorenz,5 Inference - F1 score,3 DSARF,0.629
+,Lorenz,1 RMSE,3 DSARF,0.03
+,Lorenz,2 Accuracy (%),3 DSARF,0.552
+,Lorenz,3 F1 score,3 DSARF,0.659
+,Lorenz,4 Inference - Accuracy (%),3 DSARF,0.546
+,Lorenz,5 Inference - F1 score,3 DSARF,0.655
+,Lorenz,1 RMSE,3 DSARF,0.03
+,Lorenz,2 Accuracy (%),3 DSARF,0.885
+,Lorenz,3 F1 score,3 DSARF,0.869
+,Lorenz,4 Inference - Accuracy (%),3 DSARF,0.888
+,Lorenz,5 Inference - F1 score,3 DSARF,0.794
+Short-term,1 Sleep,1 RMSE,1 DS3M,1207
+Short-term,2 Unemployment,1 RMSE,1 DS3M,0.75
+Short-term,3 Hangzhou,1 RMSE,1 DS3M,33.32
+Short-term,4 Seattle,1 RMSE,1 DS3M,4.16
+Short-term,5 Pacific,1 RMSE,1 DS3M,0.57
+Short-term,6 Electricity,1 RMSE,1 DS3M,2971
+Short-term,1 Sleep,1 RMSE,2 SNLDS,2789
+Short-term,2 Unemployment,1 RMSE,2 SNLDS,1.59
+Short-term,3 Hangzhou,1 RMSE,2 SNLDS,36.67
+Short-term,4 Seattle,1 RMSE,2 SNLDS,4.18
+Short-term,5 Pacific,1 RMSE,2 SNLDS,15.78
+Short-term,6 Electricity,1 RMSE,2 SNLDS,5133
+Short-term,1 Sleep,1 RMSE,3 DSARF,1557
+Short-term,2 Unemployment,1 RMSE,3 DSARF,1.06
+Short-term,3 Hangzhou,1 RMSE,3 DSARF,34.81
+Short-term,4 Seattle,1 RMSE,3 DSARF,4.44
+Short-term,5 Pacific,1 RMSE,3 DSARF,0.53
+Short-term,6 Electricity,1 RMSE,3 DSARF,8805
+Short-term,1 Sleep,1 RMSE,4 SRNN,1806
+Short-term,2 Unemployment,1 RMSE,4 SRNN,2.01
+Short-term,3 Hangzhou,1 RMSE,4 SRNN,33.8
+Short-term,4 Seattle,1 RMSE,4 SRNN,4.17
+Short-term,5 Pacific,1 RMSE,4 SRNN,0.58
+Short-term,6 Electricity,1 RMSE,4 SRNN,3642
+Short-term,1 Sleep,1 RMSE,5 GRU,1264
+Short-term,2 Unemployment,1 RMSE,5 GRU,1.05
+Short-term,3 Hangzhou,1 RMSE,5 GRU,38.42
+Short-term,4 Seattle,1 RMSE,5 GRU,4.18
+Short-term,5 Pacific,1 RMSE,5 GRU,0.56
+Short-term,6 Electricity,1 RMSE,5 GRU,4784
+Short-term,1 Sleep,2 MAPE (%),1 DS3M,26.84
+Short-term,2 Unemployment,2 MAPE (%),1 DS3M,4.53
+Short-term,3 Hangzhou,2 MAPE (%),1 DS3M,23.67
+Short-term,4 Seattle,2 MAPE (%),1 DS3M,5.81
+Short-term,5 Pacific,2 MAPE (%),1 DS3M,1.69
+Short-term,6 Electricity,2 MAPE (%),1 DS3M,4.58
+Short-term,1 Sleep,2 MAPE (%),2 SNLDS,88.06
+Short-term,2 Unemployment,2 MAPE (%),2 SNLDS,16.13
+Short-term,3 Hangzhou,2 MAPE (%),2 SNLDS,23.9
+Short-term,4 Seattle,2 MAPE (%),2 SNLDS,5.85
+Short-term,5 Pacific,2 MAPE (%),2 SNLDS,58.01
+Short-term,6 Electricity,2 MAPE (%),2 SNLDS,7.79
+Short-term,1 Sleep,2 MAPE (%),3 DSARF,39.25
+Short-term,2 Unemployment,2 MAPE (%),3 DSARF,8.11
+Short-term,3 Hangzhou,2 MAPE (%),3 DSARF,29.73
+Short-term,4 Seattle,2 MAPE (%),3 DSARF,7.27
+Short-term,5 Pacific,2 MAPE (%),3 DSARF,1.57
+Short-term,6 Electricity,2 MAPE (%),3 DSARF,18.64
+Short-term,1 Sleep,2 MAPE (%),4 SRNN,50.8
+Short-term,2 Unemployment,2 MAPE (%),4 SRNN,23.15
+Short-term,3 Hangzhou,2 MAPE (%),4 SRNN,25.4
+Short-term,4 Seattle,2 MAPE (%),4 SRNN,6
+Short-term,5 Pacific,2 MAPE (%),4 SRNN,1.74
+Short-term,6 Electricity,2 MAPE (%),4 SRNN,5.34
+Short-term,1 Sleep,2 MAPE (%),5 GRU,31.17
+Short-term,2 Unemployment,2 MAPE (%),5 GRU,5.13
+Short-term,3 Hangzhou,2 MAPE (%),5 GRU,30.48
+Short-term,4 Seattle,2 MAPE (%),5 GRU,6.89
+Short-term,5 Pacific,2 MAPE (%),5 GRU,1.68
+Short-term,6 Electricity,2 MAPE (%),5 GRU,6.6
+Long-term,1 Hangzhou,1 RMSE,1 DS3M,47.5
+Long-term,2 Seattle,1 RMSE,1 DS3M,4.17
+Long-term,3 Pacific,1 RMSE,1 DS3M,0.72
+Long-term,1 Hangzhou,1 RMSE,2 SNLDS,42.83
+Long-term,2 Seattle,1 RMSE,2 SNLDS,4.19
+Long-term,3 Pacific,1 RMSE,2 SNLDS,
+Long-term,1 Hangzhou,1 RMSE,3 DSARF,42.28
+Long-term,2 Seattle,1 RMSE,3 DSARF,
+Long-term,3 Pacific,1 RMSE,3 DSARF,0.73
+Long-term,1 Hangzhou,1 RMSE,4 SRNN,60.89
+Long-term,2 Seattle,1 RMSE,4 SRNN,4.17
+Long-term,3 Pacific,1 RMSE,4 SRNN,0.98
+Long-term,1 Hangzhou,1 RMSE,5 GRU,73.18
+Long-term,2 Seattle,1 RMSE,5 GRU,16.93
+Long-term,3 Pacific,1 RMSE,5 GRU,0.755
+Long-term,1 Hangzhou,2 MAPE (%),1 DS3M,38.2
+Long-term,2 Seattle,2 MAPE (%),1 DS3M,5.81
+Long-term,3 Pacific,2 MAPE (%),1 DS3M,2.15
+Long-term,1 Hangzhou,2 MAPE (%),2 SNLDS,50.6
+Long-term,2 Seattle,2 MAPE (%),2 SNLDS,5.86
+Long-term,3 Pacific,2 MAPE (%),2 SNLDS,
+Long-term,1 Hangzhou,2 MAPE (%),3 DSARF,43.65
+Long-term,2 Seattle,2 MAPE (%),3 DSARF,
+Long-term,3 Pacific,2 MAPE (%),3 DSARF,2.29
+Long-term,1 Hangzhou,2 MAPE (%),4 SRNN,82.81
+Long-term,2 Seattle,2 MAPE (%),4 SRNN,5.8
+Long-term,3 Pacific,2 MAPE (%),4 SRNN,2.99
+Long-term,1 Hangzhou,2 MAPE (%),5 GRU,86.61
+Long-term,2 Seattle,2 MAPE (%),5 GRU,27.95
+Long-term,3 Pacific,2 MAPE (%),5 GRU,2.22

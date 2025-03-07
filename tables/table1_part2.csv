@@ -1,0 +1,7 @@
+,Metrics,mean,mean,mean,std,std,std
+Method,,1 DS3M,2 SNLDS,3 DSARF,1 DS3M,2 SNLDS,3 DSARF
+0,1 RMSE,0.168,0.225,0.03,0.017,0.064,0.0
+1,2 Accuracy (%),0.882,0.617,0.788,0.079,0.067,0.143
+2,3 F1 score,0.837,0.601,0.775,0.127,0.102,0.124
+3,4 Inference - Accuracy (%),0.911,0.744,0.789,0.068,0.174,0.146
+4,5 Inference - F1 score,0.883,0.679,0.761,0.103,0.243,0.113

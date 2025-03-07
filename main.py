@@ -358,7 +358,7 @@ testY = torch.from_numpy(testY).float()
 
 # %%
 directoryBest = os.path.join("results", "checkpoints", dataname)
-figdirectory = os.path.join("results", "figures")
+figdirectory = os.path.join("figures")
 if not os.path.exists(directoryBest):
     os.makedirs(directoryBest)
 if not os.path.exists(figdirectory):

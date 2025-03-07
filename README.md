@@ -3,7 +3,7 @@
 ## [Deep Switching State Space Model (DS<sup>3</sup>M) for Nonlinear Time Series Forecasting with Regime Switching](https://arxiv.org/abs/2106.02329)
 Authors: Xiuqin Xu, Hanqiu Peng, Ying Chen
 
-This repository provides a PyTorch implementation of DS<sup>3</sup>M, which incorporates discrete and continuous latent variables to capture possible regime-switching behavior in time series. The code covers model training, inference, and visualization across multiple real-world datasets.
+This repository provides a PyTorch implementation of DS<sup>3</sup>M, which incorporates discrete and continuous latent variables to capture possible regime-switching behavior in time series.
 
 ## Environment Setup
 
@@ -24,10 +24,10 @@ This repository provides a PyTorch implementation of DS<sup>3</sup>M, which inco
 Deep-Switching-State-Space-Model/
 │
 ├─ data/
-│   └─ [Contains 8 different datasets for training, validation, and testing]
+│   └─ [Contains 8 different datasets]
 ├─ results/
-│   ├─ figures/
-│   │   └─ [Stores generated plots showing DS^3M performance]
+│   ├─ outputs/
+│   │   └─ outputs.csv
 │   └─ checkpoints/
 │       ├─ Electricity/
 │       │   └─ checkpoint.tar
@@ -45,36 +45,21 @@ Deep-Switching-State-Space-Model/
 │       │   └─ checkpoint.tar
 │       └─ Unemployment/
 │           └─ checkpoint.tar
+├─ figures/
+│   └─ [Stores generated plots showing DS^3M performance]
+├─ tables/
+│   └─ [Stores generated tables showing DS^3M performance]
 ├─ src/
 │   ├─ DSSSMCode.py 
 │   └─ utils.py      
 ├─ LICENSE           
 ├─ README.md
 ├─ main.py
+├─ table_generation.py
 └─ requirements.txt
 ```
 
-## Usage
-To reproduce results:
-
-1. Download the checkpoints folder from [this link](https://www.dropbox.com/scl/fi/uhqpjmubfcr5wr102nxzr/checkpoints.zip?rlkey=2p6xabwl7e3325eaxefc9slbj&dl=0), unzip it, and place `checkpoints/` folder under `results/`.
-
-2. Run in the command line:
-```bash
-python main.py -p Electricity
-```
-- Replace Electricity with other dataset names (e.g., Toy, Lorenz, Sleep, Unemployment, Hangzhou, Seattle, Pacific) to test those datasets. 
-
-> **Note**: The specific source and description of the data can be found in the paper, Section 4.1 (**Simulations**) and Section 4.2 (**Real data analysis**).
-
-- By default, the script loads the pre-trained checkpoint for inference. If you want to retrain from scratch, add --train, for example:
-```bash
-python main.py -p Pacific --train
-```
-It will save the best checkpoint to `results/checkpoints/<dataset_name>/`.
-
 ## Script Descriptions
-
 - **`main.py`**  
   Parses arguments (`-p` for dataset, `--train` for training), loads data, trains or loads a model, and generates result plots.
 
@@ -84,10 +69,22 @@ It will save the best checkpoint to `results/checkpoints/<dataset_name>/`.
 - **`src/utils.py`**  
   Provides data normalization (`normalize_fit`, `normalize_invert`), dataset creation (`create_dataset2`), evaluation metrics (RMSE, MAPE), classification scores, and plotting utilities.
 
-## Figures
+## Replication Steps
+1. Download the checkpoints folder from [this link](https://www.dropbox.com/scl/fi/uhqpjmubfcr5wr102nxzr/checkpoints.zip?rlkey=2p6xabwl7e3325eaxefc9slbj&dl=0), unzip it, and place `checkpoints/` folder under `results/`.
 
-All generated figures are saved to `results/figures/`. The following mappings show how each figure corresponds to the paper:
-
+2. Generate figures
+Run below command one by one to generate the figures
+```
+python main.py -p Toy 
+python main.py -p Lorenz
+python main.py -p Sleep
+python main.py -p Unemployment
+python main.py -p Hangzhou
+python main.py -p Seattle
+python main.py -p Pacific
+python main.py -p Electricity
+```
+All generated figures are saved to `figures/`. 
 - **Figure 2(a)**: `Toy_Prediction.png`
 - **Figure 2(b)**: `Lorenz_Prediction.png`
 - **Figure 3(a)**: `Sleep_Prediction.png`
@@ -99,14 +96,31 @@ All generated figures are saved to `results/figures/`. The following mappings sh
 - **Figure 3(g)**: `Pacific_Station 0.png`
 - **Figure 3(h)**: `Pacific_Station 840.png`
 - **Figure 3(i)**: `Electricity_Station 0.png`
-- **Figure 3(j)**: `Electricity_Station 24.png`
+- **Figure 3(j)**: `Electricity_Station 24.png` 
 
 > **Note**: Due to that the forecasting results is generated via Monte Carlo method, the produced results will be slightly different with different runs.
+
+- The specific source and description of the data can be found in the paper -- Section 4.1 (**Simulations**) and Section 4.2 (**Real data analysis**).
+
+- By default, the script loads the pre-trained checkpoint for inference. If you want to retrain from scratch, add --train, for example:
+```bash
+python main.py -p Pacific --train
+```
+It will save the best checkpoint to `results/checkpoints/<dataset_name>/`.
+
+3. Generate tables
+
+Run below command to generate the tables
+```bash
+python table_generation.py
+```
+All generated tables will be saved to `tables/`.
+- **Table 1**: `table1_part1.csv` & `table1_part2.csv`
+- **Table 3**: `table3_part1.csv` & `table3_part2.csv`
 
 ## Citation
 
 If you find this code useful, please cite:
-
 ```bibtex
 @misc{xu2025deepswitchingstatespace,
       title={Deep Switching State Space Model (DS$^3$M) for Nonlinear Time Series Forecasting with Regime Switching}, 
