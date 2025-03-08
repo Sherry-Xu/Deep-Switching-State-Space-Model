@@ -18,7 +18,7 @@ This repository provides a PyTorch implementation of DS<sup>3</sup>M, which inco
     pip install -r requirements.txt
     ```
 
-## Repository Structure
+## Structure
 
 ```bash
 Deep-Switching-State-Space-Model/
@@ -73,6 +73,7 @@ Deep-Switching-State-Space-Model/
 1. Download the checkpoints folder from [this link](https://www.dropbox.com/scl/fi/uhqpjmubfcr5wr102nxzr/checkpoints.zip?rlkey=2p6xabwl7e3325eaxefc9slbj&dl=0), unzip it, and place `checkpoints/` folder under `results/`.
 
 2. Generate figures
+
 Run below command one by one to generate the figures
 ```
 python main.py -p Toy 
@@ -98,7 +99,7 @@ All generated figures are saved to `figures/`.
 - **Figure 3(i)**: `Electricity_Station 0.png`
 - **Figure 3(j)**: `Electricity_Station 24.png` 
 
-> **Note**: Due to that the forecasting results is generated via Monte Carlo method, the produced results will be slightly different with different runs.
+> **Note**: Due to that the forecasting results are generated via Monte Carlo method, the produced results will be slightly different with different runs.
 
 - The specific source and description of the data can be found in the paper -- Section 4.1 (**Simulations**) and Section 4.2 (**Real data analysis**).
 
@@ -117,6 +118,8 @@ python table_generation.py
 All generated tables will be saved to `tables/`.
 - **Table 1**: `table1_part1.csv` & `table1_part2.csv`
 - **Table 3**: `table3_part1.csv` & `table3_part2.csv`
+
+This will generate the tables based on intermediate results (results/outputs/outputs.csv) obtained using a V100 GPU.
 
 ## Citation
 
