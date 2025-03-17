@@ -33,6 +33,3 @@ print(results)
 results.to_csv("tables/table3_part2.csv")
 
 # %%
-
-
-# %%
