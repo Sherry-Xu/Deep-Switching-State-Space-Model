@@ -103,7 +103,9 @@ All generated figures are saved to `figures/`.
 
 - The specific source and description of the data can be found in the paper -- Section 4.1 (**Simulations**) and Section 4.2 (**Real data analysis**).
 
-- By default, the script loads the pre-trained checkpoint located at `results/checkpoints/<dataset_name>/checkpoint.tar` for inference. If you want to retrain from scratch, add --train, for example:
+- By default, the script loads the pre-trained checkpoint located at `results/checkpoints/<dataset_name>/checkpoint.tar` for inference. 
+
+If you want to retrain the model from scratch, add --train, for example:
 ```bash
 python main.py -p Pacific --train
 ```
