@@ -400,60 +400,84 @@ early_stopping = EarlyStopping(20, verbose=True)
 # %%
 if restore == False:
 
-    print("n_epochs", n_epochs)
-    for epoch in range(1, n_epochs + 1):
+    best_validation_temp = 1e5
 
-        # Training
-        all_d_t_sampled_train, all_z_t_sampled_train, loss_train, all_d_posterior_train, all_z_posterior_mean_train = train(
-            model, optimizer, trainX, trainY, epoch, batch_size, n_epochs)
+    # train several times to make it more stable
+    for i in range(2):
 
-        # Validation
-        if dataname in ['Unemployment', 'Sleep']:
-            loss_valid = loss_train
-        else:
-            all_d_t_sampled_valid, all_z_t_sampled_valid, loss_valid, all_d_posterior_valid, all_z_posterior_mean_valid = test(
-                model, validX, validY, epoch, "valid")
+        print("n_epochs", n_epochs)
+        for epoch in range(1, n_epochs + 1):
 
-        # Testing
-        all_d_t_sampled_test, all_z_t_sampled_test, loss_test, all_d_posterior_test, all_z_posterior_mean_test = test(
-            model, testX, testY, epoch, "test")
-        loss_train_list.append(loss_train)
-        loss_valid_list.append(loss_valid)
-        loss_test_list.append(loss_test)
+            # Training
+            all_d_t_sampled_train, all_z_t_sampled_train, loss_train, all_d_posterior_train, all_z_posterior_mean_train = train(
+                model, optimizer, trainX, trainY, epoch, batch_size, n_epochs)
 
-        if (loss_valid < best_validation):
-            best_validation = copy.deepcopy(loss_valid)
+            # Validation
+            if dataname in ['Unemployment', 'Sleep']:
+                loss_valid = loss_train
+            else:
+                all_d_t_sampled_valid, all_z_t_sampled_valid, loss_valid, all_d_posterior_valid, all_z_posterior_mean_valid = test(
+                    model, validX, validY, epoch, "valid")
+
+            # Testing
+            all_d_t_sampled_test, all_z_t_sampled_test, loss_test, all_d_posterior_test, all_z_posterior_mean_test = test(
+                model, testX, testY, epoch, "test")
+            loss_train_list.append(loss_train)
+            loss_valid_list.append(loss_valid)
+            loss_test_list.append(loss_test)
+
+            if (loss_valid < best_validation):
+                best_validation = copy.deepcopy(loss_valid)
+                torch.save({
+                    'epoch': epoch,
+                    'model_state_dict': model.state_dict(),
+                    'optimizer_state_dict': optimizer.state_dict(),
+                    'loss': loss_train,
+                }, os.path.join(directoryBest, 'best_temp.tar'))
+
+            # Learning rate scheduler
+            scheduler.step(loss_valid)
+            print("Learning rate:", optimizer.param_groups[0]['lr'])
+
+            # Early stopping
+            loss_valid_average = np.average(loss_valid_list)
+            early_stopping(loss_valid_average, model)
+            if early_stopping.early_stop:
+                print("Early stopping")
+                break
+
+        print("Running Time:", time.time()-start)
+
+        _ = plt.plot(np.array(loss_train_list), label="train")
+        _ = plt.plot(np.array(loss_valid_list), label="validation")
+        _ = plt.plot(np.array(loss_test_list), label="test")
+        _ = plt.xlabel("Epoch")
+        _ = plt.legend()
+
+        plt.show()
+
+        if best_validation < best_validation_temp:
+            best_validation_temp = best_validation
+            PATH = os.path.join(directoryBest, 'best.tar')
+            checkpoint = torch.load(os.path.join(
+                directoryBest, 'best_temp.tar'))
+            model.load_state_dict(checkpoint['model_state_dict'])
+            optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
             torch.save({
-                'epoch': epoch,
+                'epoch': checkpoint['epoch'],
                 'model_state_dict': model.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
-                'loss': loss_train,
-            }, os.path.join(directoryBest, 'best.tar'))
+                'loss': checkpoint['loss'],
+            }, PATH)
 
-        # Learning rate scheduler
-        scheduler.step(loss_valid)
-        print("Learning rate:", optimizer.param_groups[0]['lr'])
-
-        # Early stopping
-        loss_valid_average = np.average(loss_valid_list)
-        early_stopping(loss_valid_average, model)
-        if early_stopping.early_stop:
-            print("Early stopping")
-            break
-
-    print("Running Time:", time.time()-start)
-
-    _ = plt.plot(np.array(loss_train_list), label="train")
-    _ = plt.plot(np.array(loss_valid_list), label="validation")
-    _ = plt.plot(np.array(loss_test_list), label="test")
-    _ = plt.xlabel("Epoch")
-    _ = plt.legend()
-
-    plt.show()
+    os.remove(os.path.join(directoryBest, 'best_temp.tar'))
 
 # %%
 # Reload the parameters
-PATH = os.path.join(directoryBest, 'checkpoint.tar')
+if restore:
+    PATH = os.path.join(directoryBest, 'checkpoint.tar')
+else:
+    PATH = os.path.join(directoryBest, 'best.tar')
 
 # %%
 model = DSSSM(x_dim, y_dim, h_dim, z_dim, d_dim,
@@ -515,7 +539,7 @@ else:
     testForecast_mean = np.mean(all_testForecast, axis=1)
     testForecast_uq = np.quantile(all_testForecast, 0.95, axis=1)
     testForecast_lq = np.quantile(all_testForecast, 0.05, axis=1)
-testOriginal = RawDataOriginal[-int(test_len/freq)                               :, :, :].reshape(-1, RawDataOriginal.shape[2])
+testOriginal = RawDataOriginal[-int(test_len/freq):, :, :].reshape(-1, RawDataOriginal.shape[2])
 testForecast_mean.shape
 testOriginal.shape
 
