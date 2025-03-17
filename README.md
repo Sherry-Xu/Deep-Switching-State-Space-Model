@@ -121,7 +121,7 @@ All generated tables will be saved to `tables/`.
 - **Table 1**: `table1_part1.csv` & `table1_part2.csv`
 - **Table 3**: `table3_part1.csv` & `table3_part2.csv`
 
-This will generate the tables based on intermediate results (results/outputs/outputs.csv) obtained using a GPU/CPU.
+This will generate the tables based on intermediate results (results/outputs/outputs.csv) previouly obtained using a V100 GPU.
 
 ## Citation
 
