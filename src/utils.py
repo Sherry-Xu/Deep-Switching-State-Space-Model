@@ -319,6 +319,6 @@ def classification_scores(testy, yhat_classes):
     if accuracy < 0.5:
         yhat_classes = 1-yhat_classes
     accuracy = accuracy_score(testy, yhat_classes)
-    print('Accuracy: %f' % accuracy)
     f1 = f1_score(testy, yhat_classes)
-    print('F1 score: %f' % f1)
+    return accuracy, f1
+

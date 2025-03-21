@@ -522,7 +522,7 @@ forecast_d_MC_argmax = np.argmax(
 
 # %%
 if remove_mean:
-    testForecast_mean = np.mean(
+    testForecast_mean = np.mean( #y value
         all_testForecast, axis=1) + np.tile(means[0, :, :], (int(test_len/freq), 1))
     testForecast_uq = np.quantile(
         all_testForecast, 0.95, axis=1) + np.tile(means[0, :, :], (int(test_len/freq), 1))
@@ -545,11 +545,53 @@ testOriginal.shape
 
 # %%
 # Evaluation results
-evaluation(testForecast_mean.T, testOriginal.T, figdirectory)
+res = evaluation(testForecast_mean.T, testOriginal.T, figdirectory)
 
 # %%
 my_cmap = matplotlib.cm.get_cmap('rainbow')
 cmap = plt.get_cmap('RdBu', d_dim)
+import re
+
+def save_results_to_csv(dataname, d_original, DS3M, d_infer, res,
+                        csv_filename="results.csv", type_val="", d_original2=None):
+    results = []
+    
+    # DS3M 指标
+    acc_ds3m, f1_ds3m = classification_scores(d_original, DS3M)
+    results.append({"Type": type_val, "Problem": dataname, "Metrics": "2 Accuracy (%)", "Method": "1 DS3M", "value": acc_ds3m})
+    results.append({"Type": type_val, "Problem": dataname, "Metrics": "3 F1 score", "Method": "1 DS3M", "value": f1_ds3m})
+    
+    # Inference 指标
+    acc_infer, f1_infer = classification_scores(d_original, d_infer)
+    results.append({"Type": type_val, "Problem": dataname, "Metrics": "4 Inference - Accuracy (%)", "Method": "1 DS3M", "value": acc_infer})
+    results.append({"Type": type_val, "Problem": dataname, "Metrics": "5 Inference - F1 score", "Method": "1 DS3M", "value": f1_infer})
+    
+    # DS3M 的 Duration
+    if dataname == 'Toy':
+        dt1_ds3m, dt0_ds3m = duration(DS3M)
+        results.append({"Type": type_val, "Problem": dataname, "Metrics": "6 Duration dt=1", "Method": "1 DS3M", "value": dt1_ds3m})
+        results.append({"Type": type_val, "Problem": dataname, "Metrics": "7 Duration dt=0", "Method": "1 DS3M", "value": dt0_ds3m})
+
+    # 添加 rmse 行，新行的 Method 为 "RMSE"
+    rmse = res.get("rmse")
+    results.append({"Type": type_val, "Problem": dataname, "Metrics": "1 RMSE", "Method": "1 DS3M", "value": rmse})
+    
+    results_df = pd.DataFrame(results)
+    
+    def extract_prefix(s):
+        m = re.match(r"(\d+)", s)
+        return int(m.group(1)) if m else float('inf')
+    
+    # 添加临时排序列，并排序
+    results_df['MethodOrder'] = results_df['Method'].apply(extract_prefix)
+    results_df['MetricOrder'] = results_df['Metrics'].apply(extract_prefix)
+    results_df.sort_values(['MethodOrder', 'MetricOrder'], inplace=True)
+    
+    # 删除临时排序列，并调整列顺序
+    results_df = results_df[['Type', 'Problem', 'Metrics', 'Method', 'value']]
+    
+    # 保存到 CSV 文件
+    results_df.to_csv(csv_filename, index=False, float_format="%.3f")
 
 # %%
 if dataname == 'Toy':
@@ -565,7 +607,7 @@ if dataname == 'Toy':
     SNLDS = pd.read_csv(
         "data/Toy/Toy_s_forecasted_snlds.csv", header=None).values
 
-    DS3M = forecast_d_MC_argmax
+    DS3M = forecast_d_MC_argmax # d(state) value
     DSARF = DSARF
     SNLDS = 1-SNLDS[-size:]
 
@@ -630,6 +672,9 @@ if dataname == 'Toy':
     plt.savefig(figdirectory+"Prediction.png", format='png')
     plt.show()
 
+    save_results_to_csv(dataname, d_original[-size:], DS3M, d_infer, res,
+                        csv_filename="results/outputs/Toy_table.csv", type_val="")
+    
 # %%
 if dataname == 'Lorenz':
 
@@ -645,9 +690,8 @@ if dataname == 'Lorenz':
     latents = z_true[0, 1:1001, :]
     categories = all_d_t_sampled_plot_test[:, 1:, :].reshape(-1)
     accuracy = sum(states.numpy().reshape(-1)
-                   [1:(trainX2.shape[0]+1)] == categories)/len(categories)
+                   [1:(trainX2.shape[0]+1)] == categories)/len(categories)    
     colormap = np.array(['r', 'b', 'g', 'y'])
-    import matplotlib.pyplot as plt
     from mpl_toolkits.mplot3d import Axes3D
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
@@ -656,6 +700,9 @@ if dataname == 'Lorenz':
     plt.savefig(figdirectory+"Prediction.png", format='png')
     plt.show()
 
+    save_results_to_csv(dataname, states.numpy().reshape(-1)[-testX.shape[1]:], forecast_d_MC_argmax, categories, res,
+                        csv_filename="results/outputs/Lorenz_table.csv", type_val="")
+    
 # %%
 if dataname == 'Sleep':
     size = testY_inversed.shape[0]
@@ -684,6 +731,14 @@ if dataname == 'Sleep':
 
     plt.savefig(figdirectory + 'Prediction.png', format='png')
     plt.show()
+
+    results = []
+    rmse = res.get("rmse")
+    mape = res.get("mape")
+    results.append({"Type": 'Short-term', "Problem": dataname, "Metrics": "1 RMSE", "Method": "1 DS3M", "value": rmse})
+    results.append({"Type": 'Short-term', "Problem": dataname, "Metrics": "2 MAPE (%)", "Method": "1 DS3M", "value": mape * 100})
+    results_df = pd.DataFrame(results)
+    results_df.to_csv('results/outputs/Sleep_table.csv', index=False, float_format="%.3f")
 
 # %%
 if dataname == 'Unemployment':
@@ -714,6 +769,14 @@ if dataname == 'Unemployment':
     plt.savefig(figdirectory + 'Prediction.png', format='png')
     plt.show()
 
+    results = []
+    rmse = res.get("rmse")
+    mape = res.get("mape")
+    results.append({"Type": 'Short-term', "Problem": dataname, "Metrics": "1 RMSE", "Method": "1 DS3M", "value": rmse})
+    results.append({"Type": 'Short-term', "Problem": dataname, "Metrics": "2 MAPE (%)", "Method": "1 DS3M", "value": mape * 100})
+    results_df = pd.DataFrame(results)
+    results_df.to_csv('results/outputs/Unemployment_table.csv', index=False, float_format="%.3f")
+
 # %%
 if dataname == 'Hangzhou':
     for station in [0, 40]:
@@ -733,6 +796,14 @@ if dataname == 'Hangzhou':
         plt.savefig(figdirectory+'Station %i' % (station)+'.png', format='png')
         plt.show()
 
+    results = []
+    rmse = res.get("rmse")
+    mape = res.get("mape")
+    results.append({"Type": 'Short-term', "Problem": dataname, "Metrics": "1 RMSE", "Method": "1 DS3M", "value": rmse})
+    results.append({"Type": 'Short-term', "Problem": dataname, "Metrics": "2 MAPE (%)", "Method": "1 DS3M", "value": mape * 100})
+    results_df = pd.DataFrame(results)
+    results_df.to_csv('results/outputs/Hangzhou_table.csv', index=False, float_format="%.3f")
+
 # %%
 if dataname == 'Seattle':
     for station in [0, 322]:
@@ -751,6 +822,14 @@ if dataname == 'Seattle':
         plt.suptitle('%s #%i' % (dataname, station))
         plt.savefig(figdirectory+'Station %i' % (station)+'.png', format='png')
         plt.show()
+
+    results = []
+    rmse = res.get("rmse")
+    mape = res.get("mape")
+    results.append({"Type": 'Short-term', "Problem": dataname, "Metrics": "1 RMSE", "Method": "1 DS3M", "value": rmse})
+    results.append({"Type": 'Short-term', "Problem": dataname, "Metrics": "2 MAPE (%)", "Method": "1 DS3M", "value": mape * 100})
+    results_df = pd.DataFrame(results)
+    results_df.to_csv('results/outputs/Hangzhou_table.csv', index=False, float_format="%.3f")
 
 # %%
 if dataname == 'Pacific':
@@ -774,6 +853,13 @@ if dataname == 'Pacific':
         plt.savefig(figdirectory+'Station %i' % (station)+'.png', format='png')
         plt.show()
 
+    results = []
+    rmse = res.get("rmse")
+    mape = res.get("mape")
+    results.append({"Type": 'Short-term', "Problem": dataname, "Metrics": "1 RMSE", "Method": "1 DS3M", "value": rmse})
+    results.append({"Type": 'Short-term', "Problem": dataname, "Metrics": "2 MAPE (%)", "Method": "1 DS3M", "value": mape * 100})
+    results_df = pd.DataFrame(results)
+    results_df.to_csv('results/outputs/Pacific_table.csv', index=False, float_format="%.3f")
 
 # %%
 if dataname == 'Electricity':
@@ -793,3 +879,11 @@ if dataname == 'Electricity':
         plt.suptitle('%s #%i' % (dataname, station))
         plt.savefig(figdirectory+'Station %i' % (station)+'.png', format='png')
         plt.show()
+
+    results = []
+    rmse = res.get("rmse")
+    mape = res.get("mape")
+    results.append({"Type": 'Short-term', "Problem": dataname, "Metrics": "1 RMSE", "Method": "1 DS3M", "value": rmse})
+    results.append({"Type": 'Short-term', "Problem": dataname, "Metrics": "2 MAPE (%)", "Method": "1 DS3M", "value": mape * 100})
+    results_df = pd.DataFrame(results)
+    results_df.to_csv('results/outputs/Electricity_table.csv', index=False, float_format="%.3f")
