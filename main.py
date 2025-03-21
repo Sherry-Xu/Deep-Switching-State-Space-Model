@@ -551,7 +551,27 @@ res = evaluation(testForecast_mean.T, testOriginal.T, figdirectory)
 my_cmap = matplotlib.cm.get_cmap('rainbow')
 cmap = plt.get_cmap('RdBu', d_dim)
 import re
+import pandas as pd
 
+def save_rmse_mape(dataname, res, csv_filename):
+    """
+    Save RMSE and MAPE results into a CSV file.
+
+    Parameters:
+        dataname (str): The name of the dataset.
+        res (dict): A dictionary containing 'rmse' and 'mape'.
+        csv_filename (str): The output CSV file path.
+    """
+    rmse = res.get("rmse")
+    mape = res.get("mape")
+    results = [
+        {"Type": "Short-term", "Problem": dataname, "Metrics": "1 RMSE", "Method": "1 DS3M", "value": rmse},
+        {"Type": "Short-term", "Problem": dataname, "Metrics": "2 MAPE (%)", "Method": "1 DS3M", "value": mape * 100}
+    ]
+    results_df = pd.DataFrame(results)
+    results_df.to_csv(csv_filename, index=False, float_format="%.3f")
+
+# %%
 def save_results_to_csv(dataname, d_original, DS3M, d_infer, res,
                         csv_filename="results.csv", type_val="", d_original2=None):
     results = []
@@ -673,7 +693,7 @@ if dataname == 'Toy':
     plt.show()
 
     save_results_to_csv(dataname, d_original[-size:], DS3M, d_infer, res,
-                        csv_filename="results/outputs/Toy_table.csv", type_val="")
+                        csv_filename=f"results/outputs/{dataname}_table.csv", type_val="")
     
 # %%
 if dataname == 'Lorenz':
@@ -701,7 +721,7 @@ if dataname == 'Lorenz':
     plt.show()
 
     save_results_to_csv(dataname, states.numpy().reshape(-1)[-testX.shape[1]:], forecast_d_MC_argmax, categories, res,
-                        csv_filename="results/outputs/Lorenz_table.csv", type_val="")
+                        csv_filename=f"results/outputs/{dataname}_table.csv", type_val="")
     
 # %%
 if dataname == 'Sleep':
@@ -732,13 +752,7 @@ if dataname == 'Sleep':
     plt.savefig(figdirectory + 'Prediction.png', format='png')
     plt.show()
 
-    results = []
-    rmse = res.get("rmse")
-    mape = res.get("mape")
-    results.append({"Type": 'Short-term', "Problem": dataname, "Metrics": "1 RMSE", "Method": "1 DS3M", "value": rmse})
-    results.append({"Type": 'Short-term', "Problem": dataname, "Metrics": "2 MAPE (%)", "Method": "1 DS3M", "value": mape * 100})
-    results_df = pd.DataFrame(results)
-    results_df.to_csv('results/outputs/Sleep_table.csv', index=False, float_format="%.3f")
+    save_rmse_mape(dataname, res, f"results/outputs/{dataname}_table.csv")
 
 # %%
 if dataname == 'Unemployment':
@@ -769,13 +783,8 @@ if dataname == 'Unemployment':
     plt.savefig(figdirectory + 'Prediction.png', format='png')
     plt.show()
 
-    results = []
-    rmse = res.get("rmse")
-    mape = res.get("mape")
-    results.append({"Type": 'Short-term', "Problem": dataname, "Metrics": "1 RMSE", "Method": "1 DS3M", "value": rmse})
-    results.append({"Type": 'Short-term', "Problem": dataname, "Metrics": "2 MAPE (%)", "Method": "1 DS3M", "value": mape * 100})
-    results_df = pd.DataFrame(results)
-    results_df.to_csv('results/outputs/Unemployment_table.csv', index=False, float_format="%.3f")
+    save_rmse_mape(dataname, res, f"results/outputs/{dataname}_table.csv")
+
 
 # %%
 if dataname == 'Hangzhou':
@@ -796,13 +805,8 @@ if dataname == 'Hangzhou':
         plt.savefig(figdirectory+'Station %i' % (station)+'.png', format='png')
         plt.show()
 
-    results = []
-    rmse = res.get("rmse")
-    mape = res.get("mape")
-    results.append({"Type": 'Short-term', "Problem": dataname, "Metrics": "1 RMSE", "Method": "1 DS3M", "value": rmse})
-    results.append({"Type": 'Short-term', "Problem": dataname, "Metrics": "2 MAPE (%)", "Method": "1 DS3M", "value": mape * 100})
-    results_df = pd.DataFrame(results)
-    results_df.to_csv('results/outputs/Hangzhou_table.csv', index=False, float_format="%.3f")
+    save_rmse_mape(dataname, res, f"results/outputs/{dataname}_table.csv")
+
 
 # %%
 if dataname == 'Seattle':
@@ -823,13 +827,7 @@ if dataname == 'Seattle':
         plt.savefig(figdirectory+'Station %i' % (station)+'.png', format='png')
         plt.show()
 
-    results = []
-    rmse = res.get("rmse")
-    mape = res.get("mape")
-    results.append({"Type": 'Short-term', "Problem": dataname, "Metrics": "1 RMSE", "Method": "1 DS3M", "value": rmse})
-    results.append({"Type": 'Short-term', "Problem": dataname, "Metrics": "2 MAPE (%)", "Method": "1 DS3M", "value": mape * 100})
-    results_df = pd.DataFrame(results)
-    results_df.to_csv('results/outputs/Hangzhou_table.csv', index=False, float_format="%.3f")
+    save_rmse_mape(dataname, res, f"results/outputs/{dataname}_table.csv")
 
 # %%
 if dataname == 'Pacific':
@@ -853,13 +851,7 @@ if dataname == 'Pacific':
         plt.savefig(figdirectory+'Station %i' % (station)+'.png', format='png')
         plt.show()
 
-    results = []
-    rmse = res.get("rmse")
-    mape = res.get("mape")
-    results.append({"Type": 'Short-term', "Problem": dataname, "Metrics": "1 RMSE", "Method": "1 DS3M", "value": rmse})
-    results.append({"Type": 'Short-term', "Problem": dataname, "Metrics": "2 MAPE (%)", "Method": "1 DS3M", "value": mape * 100})
-    results_df = pd.DataFrame(results)
-    results_df.to_csv('results/outputs/Pacific_table.csv', index=False, float_format="%.3f")
+    save_rmse_mape(dataname, res, f"results/outputs/{dataname}_table.csv")
 
 # %%
 if dataname == 'Electricity':
@@ -880,10 +872,4 @@ if dataname == 'Electricity':
         plt.savefig(figdirectory+'Station %i' % (station)+'.png', format='png')
         plt.show()
 
-    results = []
-    rmse = res.get("rmse")
-    mape = res.get("mape")
-    results.append({"Type": 'Short-term', "Problem": dataname, "Metrics": "1 RMSE", "Method": "1 DS3M", "value": rmse})
-    results.append({"Type": 'Short-term', "Problem": dataname, "Metrics": "2 MAPE (%)", "Method": "1 DS3M", "value": mape * 100})
-    results_df = pd.DataFrame(results)
-    results_df.to_csv('results/outputs/Electricity_table.csv', index=False, float_format="%.3f")
+    save_rmse_mape(dataname, res, f"results/outputs/{dataname}_table.csv")
