@@ -90,7 +90,7 @@ The best checkpoint will be saved to `results/checkpoints/<dataset_name>/best.ta
 chmod +x run_experiments.sh  
 ./run_experiments.sh
 ```
-- Inside run_experiments.sh, we will load the pre-trained for each dataset.
+- Inside `run_experiments.sh`, we will load the pre-trained for each dataset.
 > **Note**: Due to that the forecasting results are generated via Monte Carlo method, the produced results will be slightly different with different runs.
 
 All generated figures are saved to `figures/`. 
