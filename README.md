@@ -87,10 +87,10 @@ The best checkpoint will be saved to `results/checkpoints/<dataset_name>/best.ta
 1. Download the checkpoints folder from [this link](https://www.dropbox.com/scl/fi/uhqpjmubfcr5wr102nxzr/checkpoints.zip?rlkey=2p6xabwl7e3325eaxefc9slbj&dl=0) as said above.
 2. Run below command in terminal to obtain the figure and tables
 ```bash
-chmod +x run_experiments.sh  
-./run_experiments.sh
+chmod +x reload_experiment.sh  
+./reload_experiment.sh
 ```
-- Inside `run_experiments.sh`, we will load the pre-trained for each dataset.
+- Inside `reload_experiment.sh`, we will load the pre-trained for each dataset.
 > **Note**: Due to that the forecasting results are generated via Monte Carlo method, the produced results will be slightly different with different runs.
 
 All generated figures are saved to `figures/`. 
@@ -114,10 +114,10 @@ All generated tables will be saved to `tables/`. It will also be shown in the te
 ### Option 2. To retrain the models and obtain the prediction results for each dataset
 Run below command in terminal
 ```bash
-chmod +x run_experiments.sh  
-./run_experiments.sh
+chmod +x retrain_experiment.sh  
+./retrain_experiment.sh
 ```
-Inside run_experiments.sh, we retrain the model for for each dataset. This will take around 2 hours (on a MacBook Pro with M1 with memory 16GB).
+Inside `retrain_experiment.sh`, we retrain the model for for each dataset. This will take around 2 hours (on a MacBook Pro with M1 with memory 16GB).
 
 All generated figures are saved to `figures/` similar to above.
 
