@@ -381,20 +381,14 @@ def save_results_to_csv(dataname, d_original, d_forecast, d_infer, res,
                         csv_filename="results/outputs/outputs_generated.csv", type_val=""):
     results = []
 
-    # DS3M 指标
     acc_ds3m, f1_ds3m = classification_scores(d_original, d_forecast)
-
-    # Inference 指标
     acc_infer, f1_infer = classification_scores(d_original, d_infer)
 
     if np.isnan(f1_ds3m) or np.isnan(f1_infer):
         return
 
-    # Duration
     if dataname == 'Toy':
         dt1_ds3m, dt0_ds3m = duration(d_forecast)
-        # if res.get("rmse") > 20:
-        #     return
         results.append({"Type": type_val, "Problem": dataname,
                        "Metrics": "2 Duration for dt=1", "Method": "1 DS3M", "value": dt1_ds3m})
         results.append({"Type": type_val, "Problem": dataname,
@@ -416,7 +410,6 @@ def save_results_to_csv(dataname, d_original, d_forecast, d_infer, res,
                         "Metrics": "4 Inference - Accuracy (%)", "Method": "1 DS3M", "value": acc_infer})
         results.append({"Type": type_val, "Problem": dataname,
                         "Metrics": "5 Inference - F1 score", "Method": "1 DS3M", "value": f1_infer})
-    # 添加 rmse 行，新行的 Method 为 "RMSE"
     rmse = res.get("rmse")
     results.append({"Type": type_val, "Problem": dataname,
                    "Metrics": "1 RMSE", "Method": "1 DS3M", "value": rmse})
@@ -427,15 +420,11 @@ def save_results_to_csv(dataname, d_original, d_forecast, d_infer, res,
         m = re.match(r"(\d+)", s)
         return int(m.group(1)) if m else float('inf')
 
-    # 添加临时排序列，并排序
     results_df['MethodOrder'] = results_df['Method'].apply(extract_prefix)
     results_df['MetricOrder'] = results_df['Metrics'].apply(extract_prefix)
     results_df.sort_values(['MethodOrder', 'MetricOrder'], inplace=True)
-
-    # 删除临时排序列，并调整列顺序
     results_df = results_df[['Type', 'Problem', 'Metrics', 'Method', 'value']]
 
-    # 保存到 CSV 文件
     if os.path.exists(csv_filename):
         results_df.to_csv(csv_filename, mode='a', header=False,
                           index=False, float_format="%.3f")

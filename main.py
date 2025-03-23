@@ -741,7 +741,6 @@ if dataname == 'Unemployment':
 
     save_rmse_mape(dataname, res)
 
-
 # %%
 if dataname == 'Hangzhou':
     for station in [0, 40]:
@@ -768,6 +767,7 @@ if dataname == 'Hangzhou':
         model, testX[:, 0:1, :], testY[:, 0:1, :], test_len, MC_S=200)
 
     save_rmse_mape(dataname, res, "Long-term")
+
 # %%
 if dataname == 'Seattle':
     for station in [0, 322]:
@@ -794,6 +794,7 @@ if dataname == 'Seattle':
         model, testX[:, 0:1, :], testY[:, 0:1, :], test_len, MC_S=200)
 
     save_rmse_mape(dataname, res, "Long-term")
+
 # %%
 if dataname == 'Pacific':
 
