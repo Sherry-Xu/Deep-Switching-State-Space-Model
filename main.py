@@ -49,7 +49,7 @@ print(args)
 dataname = args.problem
 print(dataname)
 restore = not args.train
-
+retry = 3
 # %%
 if dataname == 'Toy':
 
@@ -158,7 +158,7 @@ if dataname == 'Unemployment':
     RawDataOriginal = pd.read_csv(
         'data/Unemployment/UNRATE.csv', header=0).loc[:, 'UNRATE'].values
     RawDataOriginal = RawDataOriginal.reshape(-1, 1, 1)
-
+    torch.manual_seed(19)
 
 # %%
 if dataname == "Hangzhou":
@@ -403,7 +403,7 @@ if restore == False:
     best_validation_temp = 1e5
 
     # train several times to make it more stable
-    for i in range(2):
+    for i in range(retry):
 
         print("n_epochs", n_epochs)
         for epoch in range(1, n_epochs + 1):
@@ -495,123 +495,70 @@ total_params = sum(p.numel() for p in model.parameters())
 # print("The total number of parameters:", total_params)
 
 # %%
-forecaststep = 1
-MC_S = 200
-forecast_MC, forecast_d_MC, forecast_z_MC = model._forecastingMultiStep(
-    testX, testY, forecaststep, MC_S)
-
-# %%
-all_testForecast = normalize_invert(
-    forecast_MC.squeeze(1).transpose(1, 0, 2), moments)
-testY_inversed = normalize_invert(
-    testY.cpu().numpy().transpose(1, 0, 2), moments)
-
-size = testY_inversed.shape[0]
 
 
-# %%
-forecast_d_MC_final = np.mean(forecast_d_MC[:, -1, :, :], axis=0)
-forecast_z_MC_final = np.mean(forecast_z_MC[:, -1, :, :], axis=0)
+def forecast(model, testX, testY, forecaststep=1, MC_S=200):
 
-forecast_d_MC_argmax = []
-for i in range(d_dim):
-    forecast_d_MC_argmax.append(
-        np.sum(forecast_d_MC[:, -1, :, :] == i, axis=0))
-forecast_d_MC_argmax = np.argmax(
-    np.array(forecast_d_MC_argmax), axis=0).reshape(-1)
+    forecast_MC, forecast_d_MC, forecast_z_MC = model._forecastingMultiStep(
+        testX, testY, forecaststep, MC_S)
 
-# %%
-if remove_mean:
-    testForecast_mean = np.mean( #y value
-        all_testForecast, axis=1) + np.tile(means[0, :, :], (int(test_len/freq), 1))
-    testForecast_uq = np.quantile(
-        all_testForecast, 0.95, axis=1) + np.tile(means[0, :, :], (int(test_len/freq), 1))
-    testForecast_lq = np.quantile(
-        all_testForecast, 0.05, axis=1) + np.tile(means[0, :, :], (int(test_len/freq), 1))
-elif remove_residual:
-    testForecast_mean = np.mean(
-        all_testForecast, axis=1) + trend[-test_len:, :]
-    testForecast_uq = np.quantile(
-        all_testForecast, 0.95, axis=1) + trend[-test_len:, :]
-    testForecast_lq = np.quantile(
-        all_testForecast, 0.05, axis=1) + trend[-test_len:, :]
-else:
-    testForecast_mean = np.mean(all_testForecast, axis=1)
-    testForecast_uq = np.quantile(all_testForecast, 0.95, axis=1)
-    testForecast_lq = np.quantile(all_testForecast, 0.05, axis=1)
-testOriginal = RawDataOriginal[-int(test_len/freq):, :, :].reshape(-1, RawDataOriginal.shape[2])
-testForecast_mean.shape
-testOriginal.shape
+    # print(forecast_MC.shape, forecast_d_MC.shape, forecast_z_MC.shape)
 
-# %%
-# Evaluation results
-res = evaluation(testForecast_mean.T, testOriginal.T, figdirectory)
+    # %%
+    if forecaststep == 1:
+        all_testForecast = normalize_invert(
+            forecast_MC.squeeze(1).transpose(1, 0, 2), moments)
+    else:
+        all_testForecast = normalize_invert(
+            forecast_MC.squeeze(2).transpose(1, 0, 2), moments)
+
+    testY_inversed = normalize_invert(
+        testY.cpu().numpy().transpose(1, 0, 2), moments)
+    size = testY_inversed.shape[0]
+
+    forecast_d_MC_argmax = []
+    for i in range(d_dim):
+        forecast_d_MC_argmax.append(
+            np.sum(forecast_d_MC[:, -1, :, :] == i, axis=0))
+    forecast_d_MC_argmax = np.argmax(
+        np.array(forecast_d_MC_argmax), axis=0).reshape(-1)
+
+    # %%
+    if remove_mean:
+        testForecast_mean = np.mean(
+            all_testForecast, axis=1) + np.tile(means[0, :, :], (int(test_len/freq), 1))
+        testForecast_uq = np.quantile(
+            all_testForecast, 0.95, axis=1) + np.tile(means[0, :, :], (int(test_len/freq), 1))
+        testForecast_lq = np.quantile(
+            all_testForecast, 0.05, axis=1) + np.tile(means[0, :, :], (int(test_len/freq), 1))
+    elif remove_residual:
+        testForecast_mean = np.mean(
+            all_testForecast, axis=1) + trend[-test_len:, :]
+        testForecast_uq = np.quantile(
+            all_testForecast, 0.95, axis=1) + trend[-test_len:, :]
+        testForecast_lq = np.quantile(
+            all_testForecast, 0.05, axis=1) + trend[-test_len:, :]
+    else:
+        testForecast_mean = np.mean(all_testForecast, axis=1)
+        testForecast_uq = np.quantile(all_testForecast, 0.95, axis=1)
+        testForecast_lq = np.quantile(all_testForecast, 0.05, axis=1)
+
+    testOriginal = RawDataOriginal[-int(test_len/freq):, :, :].reshape(-1, RawDataOriginal.shape[2])
+    # print(testForecast_mean.shape, testOriginal.shape)
+
+    # %%
+    # Evaluation results
+    res = evaluation(testForecast_mean.T, testOriginal.T)
+
+    return res, testForecast_mean, testOriginal, size, forecast_d_MC_argmax, testForecast_uq, testForecast_lq
+
+
+res, testForecast_mean, testOriginal, size, forecast_d_MC_argmax, testForecast_uq, testForecast_lq = forecast(
+    model, testX, testY, forecaststep=1, MC_S=200)
 
 # %%
 my_cmap = matplotlib.cm.get_cmap('rainbow')
 cmap = plt.get_cmap('RdBu', d_dim)
-import re
-import pandas as pd
-
-def save_rmse_mape(dataname, res, csv_filename):
-    """
-    Save RMSE and MAPE results into a CSV file.
-
-    Parameters:
-        dataname (str): The name of the dataset.
-        res (dict): A dictionary containing 'rmse' and 'mape'.
-        csv_filename (str): The output CSV file path.
-    """
-    rmse = res.get("rmse")
-    mape = res.get("mape")
-    results = [
-        {"Type": "Short-term", "Problem": dataname, "Metrics": "1 RMSE", "Method": "1 DS3M", "value": rmse},
-        {"Type": "Short-term", "Problem": dataname, "Metrics": "2 MAPE (%)", "Method": "1 DS3M", "value": mape * 100}
-    ]
-    results_df = pd.DataFrame(results)
-    results_df.to_csv(csv_filename, index=False, float_format="%.3f")
-
-# %%
-def save_results_to_csv(dataname, d_original, DS3M, d_infer, res,
-                        csv_filename="results.csv", type_val="", d_original2=None):
-    results = []
-    
-    # DS3M 指标
-    acc_ds3m, f1_ds3m = classification_scores(d_original, DS3M)
-    results.append({"Type": type_val, "Problem": dataname, "Metrics": "2 Accuracy (%)", "Method": "1 DS3M", "value": acc_ds3m})
-    results.append({"Type": type_val, "Problem": dataname, "Metrics": "3 F1 score", "Method": "1 DS3M", "value": f1_ds3m})
-    
-    # Inference 指标
-    acc_infer, f1_infer = classification_scores(d_original, d_infer)
-    results.append({"Type": type_val, "Problem": dataname, "Metrics": "4 Inference - Accuracy (%)", "Method": "1 DS3M", "value": acc_infer})
-    results.append({"Type": type_val, "Problem": dataname, "Metrics": "5 Inference - F1 score", "Method": "1 DS3M", "value": f1_infer})
-    
-    # DS3M 的 Duration
-    if dataname == 'Toy':
-        dt1_ds3m, dt0_ds3m = duration(DS3M)
-        results.append({"Type": type_val, "Problem": dataname, "Metrics": "6 Duration dt=1", "Method": "1 DS3M", "value": dt1_ds3m})
-        results.append({"Type": type_val, "Problem": dataname, "Metrics": "7 Duration dt=0", "Method": "1 DS3M", "value": dt0_ds3m})
-
-    # 添加 rmse 行，新行的 Method 为 "RMSE"
-    rmse = res.get("rmse")
-    results.append({"Type": type_val, "Problem": dataname, "Metrics": "1 RMSE", "Method": "1 DS3M", "value": rmse})
-    
-    results_df = pd.DataFrame(results)
-    
-    def extract_prefix(s):
-        m = re.match(r"(\d+)", s)
-        return int(m.group(1)) if m else float('inf')
-    
-    # 添加临时排序列，并排序
-    results_df['MethodOrder'] = results_df['Method'].apply(extract_prefix)
-    results_df['MetricOrder'] = results_df['Metrics'].apply(extract_prefix)
-    results_df.sort_values(['MethodOrder', 'MetricOrder'], inplace=True)
-    
-    # 删除临时排序列，并调整列顺序
-    results_df = results_df[['Type', 'Problem', 'Metrics', 'Method', 'value']]
-    
-    # 保存到 CSV 文件
-    results_df.to_csv(csv_filename, index=False, float_format="%.3f")
 
 # %%
 if dataname == 'Toy':
@@ -627,7 +574,10 @@ if dataname == 'Toy':
     SNLDS = pd.read_csv(
         "data/Toy/Toy_s_forecasted_snlds.csv", header=None).values
 
-    DS3M = forecast_d_MC_argmax # d(state) value
+    DS3M = forecast_d_MC_argmax  # d(state) value
+    acc = accuracy_score(d_original[-size:], DS3M)
+    if acc < 0.5:
+        DS3M = 1-DS3M
     DSARF = DSARF
     SNLDS = 1-SNLDS[-size:]
 
@@ -692,25 +642,19 @@ if dataname == 'Toy':
     plt.savefig(figdirectory+"Prediction.png", format='png')
     plt.show()
 
-    save_results_to_csv(dataname, d_original[-size:], DS3M, d_infer, res,
-                        csv_filename=f"results/outputs/{dataname}_table.csv", type_val="")
-    
+    save_results_to_csv(
+        dataname, d_original[-size:], DS3M, d_infer, res, type_val="")
+
 # %%
 if dataname == 'Lorenz':
 
     trainX2 = torch.from_numpy(RawDataOriginal[:1000, :, :]).float().to(device)
     trainY2 = torch.from_numpy(
         RawDataOriginal[1:1001, :, :]).float().to(device)
-    testX2 = torch.from_numpy(
-        RawDataOriginal[(-test_len-1):-1, :, :]).float().to(device)
-    testY2 = torch.from_numpy(
-        RawDataOriginal[-test_len:, :, :]).float().to(device)
     all_d_t_sampled_plot_test, all_z_t_sampled_test, loss_test, all_d_posterior_test, all_z_posterior_mean_test = test(
         model, trainX2, trainY2, 0, "test")
     latents = z_true[0, 1:1001, :]
     categories = all_d_t_sampled_plot_test[:, 1:, :].reshape(-1)
-    accuracy = sum(states.numpy().reshape(-1)
-                   [1:(trainX2.shape[0]+1)] == categories)/len(categories)    
     colormap = np.array(['r', 'b', 'g', 'y'])
     from mpl_toolkits.mplot3d import Axes3D
     fig = plt.figure()
@@ -720,27 +664,39 @@ if dataname == 'Lorenz':
     plt.savefig(figdirectory+"Prediction.png", format='png')
     plt.show()
 
-    save_results_to_csv(dataname, states.numpy().reshape(-1)[-testX.shape[1]:], forecast_d_MC_argmax, categories, res,
-                        csv_filename=f"results/outputs/{dataname}_table.csv", type_val="")
-    
+    testX2 = torch.from_numpy(
+        RawDataOriginal[(-test_len-1):-1, :, :]).float().to(device)
+    testY2 = torch.from_numpy(
+        RawDataOriginal[-test_len:, :, :]).float().to(device)
+    all_d_t_sampled_plot_test, all_z_t_sampled_test, loss_test, all_d_posterior_test, all_z_posterior_mean_test = test(
+        model, testX2, testY2, 0, "test")
+    categories = all_d_t_sampled_plot_test[:, 1:, :].reshape(-1)
+
+    save_results_to_csv(dataname,
+                        states.numpy().reshape(-1)[-testX.shape[1]:],
+                        forecast_d_MC_argmax,
+                        categories,
+                        res,
+                        type_val="")
+
 # %%
 if dataname == 'Sleep':
-    size = testY_inversed.shape[0]
+
     xticks_int = 100
 
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(20, 4),
                                    sharex=True, gridspec_kw={'height_ratios': [3, 0.5]})
     ax1.plot(np.arange(size*predict_dim)/predict_dim,
-             testY_inversed[:, -1, :].reshape(-1), label='original')
-    ax1.plot(np.arange(size*predict_dim)/predict_dim, np.mean(all_testForecast,
-             axis=1).reshape(-1), color='red', label='forecasted mean')
-    ax1.plot(np.arange(size*predict_dim)/predict_dim, np.quantile(all_testForecast,
-             0.95, axis=1).reshape(-1), color='grey', alpha=0.8)
-    ax1.plot(np.arange(size*predict_dim)/predict_dim, np.quantile(all_testForecast,
-             0.05, axis=1).reshape(-1), color='grey', alpha=0.8)
+             testOriginal.reshape(-1), label='original')
+    ax1.plot(np.arange(size*predict_dim)/predict_dim,
+             testForecast_mean.reshape(-1), color='red', label='forecasted mean')
+    ax1.plot(np.arange(size*predict_dim)/predict_dim,
+             testForecast_uq.reshape(-1), color='grey', alpha=0.8)
+    ax1.plot(np.arange(size*predict_dim)/predict_dim,
+             testForecast_lq.reshape(-1), color='grey', alpha=0.8)
     ax1.fill_between(np.arange(size*predict_dim)/predict_dim,
-                     np.quantile(all_testForecast, 0.95, axis=1).reshape(-1),
-                     np.quantile(all_testForecast, 0.05, axis=1).reshape(-1), color='grey', alpha=0.2)
+                     testForecast_uq.reshape(-1),
+                     testForecast_lq.reshape(-1), color='grey', alpha=0.2)
     ax1.legend()
 
     sns.heatmap(1-forecast_d_MC_argmax.reshape(1, -1), linewidth=0,
@@ -752,7 +708,7 @@ if dataname == 'Sleep':
     plt.savefig(figdirectory + 'Prediction.png', format='png')
     plt.show()
 
-    save_rmse_mape(dataname, res, f"results/outputs/{dataname}_table.csv")
+    save_rmse_mape(dataname, res)
 
 # %%
 if dataname == 'Unemployment':
@@ -783,7 +739,7 @@ if dataname == 'Unemployment':
     plt.savefig(figdirectory + 'Prediction.png', format='png')
     plt.show()
 
-    save_rmse_mape(dataname, res, f"results/outputs/{dataname}_table.csv")
+    save_rmse_mape(dataname, res)
 
 
 # %%
@@ -805,9 +761,13 @@ if dataname == 'Hangzhou':
         plt.savefig(figdirectory+'Station %i' % (station)+'.png', format='png')
         plt.show()
 
-    save_rmse_mape(dataname, res, f"results/outputs/{dataname}_table.csv")
+    save_rmse_mape(dataname, res)
 
+    print("Long term:")
+    res, testForecast_mean, testOriginal, size, forecast_d_MC_argmax, testForecast_uq, testForecast_lq = forecast(
+        model, testX[:, 0:1, :], testY[:, 0:1, :], test_len, MC_S=200)
 
+    save_rmse_mape(dataname, res, "Long-term")
 # %%
 if dataname == 'Seattle':
     for station in [0, 322]:
@@ -827,8 +787,13 @@ if dataname == 'Seattle':
         plt.savefig(figdirectory+'Station %i' % (station)+'.png', format='png')
         plt.show()
 
-    save_rmse_mape(dataname, res, f"results/outputs/{dataname}_table.csv")
+    save_rmse_mape(dataname, res)
 
+    print("Long term:")
+    res, testForecast_mean, testOriginal, size, forecast_d_MC_argmax, testForecast_uq, testForecast_lq = forecast(
+        model, testX[:, 0:1, :], testY[:, 0:1, :], test_len, MC_S=200)
+
+    save_rmse_mape(dataname, res, "Long-term")
 # %%
 if dataname == 'Pacific':
 
@@ -851,7 +816,13 @@ if dataname == 'Pacific':
         plt.savefig(figdirectory+'Station %i' % (station)+'.png', format='png')
         plt.show()
 
-    save_rmse_mape(dataname, res, f"results/outputs/{dataname}_table.csv")
+    save_rmse_mape(dataname, res)
+
+    print("Long term:")
+    res, testForecast_mean, testOriginal, size, forecast_d_MC_argmax, testForecast_uq, testForecast_lq = forecast(
+        model, testX[:, 0:1, :], testY[:, 0:1, :], test_len, MC_S=200)
+
+    save_rmse_mape(dataname, res, "Long-term")
 
 # %%
 if dataname == 'Electricity':
@@ -872,4 +843,4 @@ if dataname == 'Electricity':
         plt.savefig(figdirectory+'Station %i' % (station)+'.png', format='png')
         plt.show()
 
-    save_rmse_mape(dataname, res, f"results/outputs/{dataname}_table.csv")
+    save_rmse_mape(dataname, res)

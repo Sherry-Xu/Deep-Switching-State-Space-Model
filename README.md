@@ -19,7 +19,6 @@ This repository provides a PyTorch implementation of DS<sup>3</sup>M, which inco
     ```
 
 ## Structure
-
 ```bash
 Deep-Switching-State-Space-Model/
 │
@@ -58,6 +57,8 @@ Deep-Switching-State-Space-Model/
 ├─ table_generation.py
 └─ requirements.txt
 ```
+- Download the checkpoints folder from [this link](https://www.dropbox.com/scl/fi/uhqpjmubfcr5wr102nxzr/checkpoints.zip?rlkey=2p6xabwl7e3325eaxefc9slbj&dl=0), unzip it, and place `checkpoints/` folder under `results/`.
+- The specific source and description of the data can be found in the paper -- Section 4.1 (**Simulations**) and Section 4.2 (**Real data analysis**).
 
 ## Script Descriptions
 - **`main.py`**  
@@ -69,22 +70,29 @@ Deep-Switching-State-Space-Model/
 - **`src/utils.py`**  
   Provides data normalization (`normalize_fit`, `normalize_invert`), dataset creation (`create_dataset2`), evaluation metrics (RMSE, MAPE), classification scores, and plotting utilities.
 
-## Replication Steps
-1. Download the checkpoints folder from [this link](https://www.dropbox.com/scl/fi/uhqpjmubfcr5wr102nxzr/checkpoints.zip?rlkey=2p6xabwl7e3325eaxefc9slbj&dl=0), unzip it, and place `checkpoints/` folder under `results/`.
-
-2. Generate figures
-
-Run below command one by one to generate the figures
-```
-python main.py -p Toy 
-python main.py -p Lorenz
-python main.py -p Sleep
-python main.py -p Unemployment
-python main.py -p Hangzhou
-python main.py -p Seattle
+## Code usage:
+1. To load the checkpoint in `results/checkpoints/<dataset_name>/checkpoint.tar`
+```bash
 python main.py -p Pacific
-python main.py -p Electricity
 ```
+2. You want to retrain the model from scratch, add --train, for example:
+```bash
+python main.py -p Pacific --train
+```
+The best checkpoint will be saved to `results/checkpoints/<dataset_name>/best.tar`.
+> You could replace `{dataset_name}` in `-p {dataset_name}` to other dataset (Toy, Lorenz, Sleep, Unemployment, Hangzhou, Seattle,  Pacific, Electricity).
+
+## Replication Steps
+### Option 1. To load the pre-trained checkpoints
+1. Download the checkpoints folder from [this link](https://www.dropbox.com/scl/fi/uhqpjmubfcr5wr102nxzr/checkpoints.zip?rlkey=2p6xabwl7e3325eaxefc9slbj&dl=0) as said above.
+2. Run below command in terminal to obtain the figure and tables
+```bash
+chmod +x run_experiments.sh  
+./run_experiments.sh
+```
+- Inside run_experiments.sh, we will load the pre-trained for each dataset.
+> **Note**: Due to that the forecasting results are generated via Monte Carlo method, the produced results will be slightly different with different runs.
+
 All generated figures are saved to `figures/`. 
 - **Figure 2(a)**: `Toy_Prediction.png`
 - **Figure 2(b)**: `Lorenz_Prediction.png`
@@ -99,32 +107,25 @@ All generated figures are saved to `figures/`.
 - **Figure 3(i)**: `Electricity_Station 0.png`
 - **Figure 3(j)**: `Electricity_Station 24.png` 
 
-> **Note**: Due to that the forecasting results are generated via Monte Carlo method, the produced results will be slightly different with different runs.
-
-- The specific source and description of the data can be found in the paper -- Section 4.1 (**Simulations**) and Section 4.2 (**Real data analysis**).
-
-- By default, the script loads the pre-trained checkpoint located at `results/checkpoints/<dataset_name>/checkpoint.tar` for inference. 
-
-If you want to retrain the model from scratch, add --train, for example:
-```bash
-python main.py -p Pacific --train
-```
-In this mode, the best checkpoint will be saved to `results/checkpoints/<dataset_name>/best.tar`.
-
-3. Generate tables
-
-Run below command to generate the tables
-```bash
-python table_generation.py
-```
-All generated tables will be saved to `tables/`.
+All generated tables will be saved to `tables/`. It will also be shown in the terminal. This will generate the tables based on saved results (results/outputs/outputs.csv).
 - **Table 1**: `table1_part1.csv` & `table1_part2.csv`
 - **Table 3**: `table3_part1.csv` & `table3_part2.csv`
 
-This will generate the tables based on intermediate results (results/outputs/outputs.csv) previouly obtained using GPU/CPU(s).
+### Option 2. To retrain the models and obtain the prediction results for each dataset
+Run below command in terminal
+```bash
+chmod +x run_experiments.sh  
+./run_experiments.sh
+```
+Inside run_experiments.sh, we retrain the model for for each dataset. This will take around 2 hours (on a MacBook Pro with M1 with memory 16GB).
+
+All generated figures are saved to `figures/` similar to above.
+
+All generated tables will be saved to `tables/` similar to above. It will also be shown in the terminal.
+
+> **Note**: Due to that the training of neural networks is conducted by SGD (can be unstable for some datasets) and the forecasting are generated using Monte Carlo, the produced results will be slightly different. Sometime will needs to retrain the models again if see some deviation.
 
 ## Citation
-
 If you find this code useful, please cite:
 ```bibtex
 @misc{xu2025deepswitchingstatespace,
@@ -139,7 +140,6 @@ If you find this code useful, please cite:
 ```
 
 ## Reproducibility Package Information
-
 **Assembled Date:** March 4, 2025  
 **Package Authors:** Xiuqin Xu and Hanqiu Peng  
 **Contact Email:** [xiuqin.sherry.xu@gmail.com](mailto:xiuqin.sherry.xu@gmail.com)

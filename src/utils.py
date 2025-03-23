@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 import torch
+import os
+import re
 
 # Normalize dataset
 
@@ -74,7 +76,7 @@ def create_dataset2(dataset, look_back=1):
     return np.array(dataX), np.array(dataY)
 
 
-def evaluation(predict, original, figdirectory=None):
+def evaluation(predict, original):
     '''
     predict and original are 2-d vectors: [days, dimension]
     '''
@@ -320,5 +322,122 @@ def classification_scores(testy, yhat_classes):
         yhat_classes = 1-yhat_classes
     accuracy = accuracy_score(testy, yhat_classes)
     f1 = f1_score(testy, yhat_classes)
+    if f1 < 0.1:
+        f1 = np.nan
     return accuracy, f1
 
+
+def save_rmse_mape(dataname, res, type="Short-term", csv_filename="results/outputs/outputs_generated.csv"):
+    """
+    Save RMSE and MAPE results into a CSV file.
+
+    Parameters:
+        dataname (str): The name of the dataset.
+        res (dict): A dictionary containing 'rmse' and 'mape'.
+        csv_filename (str): The output CSV file path.
+    """
+    if dataname == "Sleep":
+        dataname = "1 Sleep"
+    elif dataname == "Unemployment":
+        dataname = "2 Unemployment"
+    elif dataname == "Hangzhou":
+        if type == "Short-term":
+            dataname = "3 Hangzhou"
+        else:
+            dataname = "1 Hangzhou"
+    elif dataname == "Seattle":
+        if type == "Short-term":
+            dataname = "4 Seattle"
+        else:
+            dataname = "2 Seattle"
+    elif dataname == "Pacific":
+        if type == "Short-term":
+            dataname = "5 Pacific"
+        else:
+            dataname = "3 Pacific"
+    elif dataname == "Electricity":
+        dataname = "6 Electricity"
+
+    rmse = res.get("rmse")
+    mape = res.get("mape")
+    results = [
+        {"Type": type, "Problem": dataname,
+            "Metrics": "1 RMSE", "Method": "1 DS3M", "value": rmse},
+        {"Type": type, "Problem": dataname,
+            "Metrics": "2 MAPE (%)", "Method": "1 DS3M", "value": mape * 100}
+    ]
+    results_df = pd.DataFrame(results)
+
+    if os.path.exists(csv_filename):
+        results_df.to_csv(csv_filename, mode='a', header=False,
+                          index=False, float_format="%.3f")
+    else:
+        results_df.to_csv(csv_filename, index=False, float_format="%.3f")
+
+# %%
+
+
+def save_results_to_csv(dataname, d_original, d_forecast, d_infer, res,
+                        csv_filename="results/outputs/outputs_generated.csv", type_val=""):
+    results = []
+
+    # DS3M 指标
+    acc_ds3m, f1_ds3m = classification_scores(d_original, d_forecast)
+
+    # Inference 指标
+    acc_infer, f1_infer = classification_scores(d_original, d_infer)
+
+    if np.isnan(f1_ds3m) or np.isnan(f1_infer):
+        return
+
+    # Duration
+    if dataname == 'Toy':
+        dt1_ds3m, dt0_ds3m = duration(d_forecast)
+        # if res.get("rmse") > 20:
+        #     return
+        results.append({"Type": type_val, "Problem": dataname,
+                       "Metrics": "2 Duration for dt=1", "Method": "1 DS3M", "value": dt1_ds3m})
+        results.append({"Type": type_val, "Problem": dataname,
+                       "Metrics": "3 Duration for dt=0", "Method": "1 DS3M", "value": dt0_ds3m})
+        results.append({"Type": type_val, "Problem": dataname,
+                        "Metrics": "4 Accuracy (%)", "Method": "1 DS3M", "value": acc_ds3m})
+        results.append({"Type": type_val, "Problem": dataname,
+                        "Metrics": "5 F1 score", "Method": "1 DS3M", "value": f1_ds3m})
+        results.append({"Type": type_val, "Problem": dataname,
+                        "Metrics": "6 Inference - Accuracy (%)", "Method": "1 DS3M", "value": acc_infer})
+        results.append({"Type": type_val, "Problem": dataname,
+                        "Metrics": "7 Inference - F1 score", "Method": "1 DS3M", "value": f1_infer})
+    elif dataname == "Lorenz":
+        results.append({"Type": type_val, "Problem": dataname,
+                        "Metrics": "2 Accuracy (%)", "Method": "1 DS3M", "value": acc_ds3m})
+        results.append({"Type": type_val, "Problem": dataname,
+                        "Metrics": "3 F1 score", "Method": "1 DS3M", "value": f1_ds3m})
+        results.append({"Type": type_val, "Problem": dataname,
+                        "Metrics": "4 Inference - Accuracy (%)", "Method": "1 DS3M", "value": acc_infer})
+        results.append({"Type": type_val, "Problem": dataname,
+                        "Metrics": "5 Inference - F1 score", "Method": "1 DS3M", "value": f1_infer})
+    # 添加 rmse 行，新行的 Method 为 "RMSE"
+    rmse = res.get("rmse")
+    results.append({"Type": type_val, "Problem": dataname,
+                   "Metrics": "1 RMSE", "Method": "1 DS3M", "value": rmse})
+
+    results_df = pd.DataFrame(results)
+
+    def extract_prefix(s):
+        m = re.match(r"(\d+)", s)
+        return int(m.group(1)) if m else float('inf')
+
+    # 添加临时排序列，并排序
+    results_df['MethodOrder'] = results_df['Method'].apply(extract_prefix)
+    results_df['MetricOrder'] = results_df['Metrics'].apply(extract_prefix)
+    results_df.sort_values(['MethodOrder', 'MetricOrder'], inplace=True)
+
+    # 删除临时排序列，并调整列顺序
+    results_df = results_df[['Type', 'Problem', 'Metrics', 'Method', 'value']]
+
+    # 保存到 CSV 文件
+    if os.path.exists(csv_filename):
+        results_df.to_csv(csv_filename, mode='a', header=False,
+                          index=False, float_format="%.3f")
+    else:
+        results_df.to_csv(csv_filename, index=False, float_format="%.3f")
