@@ -80,18 +80,19 @@ python main.py -p Pacific
 python main.py -p Pacific --train
 ```
 The best checkpoint will be saved to `results/checkpoints/<dataset_name>/best.tar`.
-> You could replace `{dataset_name}` in `-p {dataset_name}` to other dataset (Toy, Lorenz, Sleep, Unemployment, Hangzhou, Seattle,  Pacific, Electricity).
+> You can replace `{dataset_name}` in `-p {dataset_name}` to other dataset (Toy, Lorenz, Sleep, Unemployment, Hangzhou, Seattle,  Pacific, Electricity).
 
 ## Replication Steps
 ### Option 1. To load the pre-trained checkpoints
-1. Download the checkpoints folder from [this link](https://www.dropbox.com/scl/fi/uhqpjmubfcr5wr102nxzr/checkpoints.zip?rlkey=2p6xabwl7e3325eaxefc9slbj&dl=0) as said above.
-2. Run below command in terminal to obtain the figure and tables
+1. Download the checkpoints folder from [this link](https://www.dropbox.com/scl/fi/uhqpjmubfcr5wr102nxzr/checkpoints.zip?rlkey=2p6xabwl7e3325eaxefc9slbj&dl=0) as described above.
+2. Run the following command in the terminal to obtain the figures and tables:
+
 ```bash
 chmod +x reload_experiment.sh  
 ./reload_experiment.sh
 ```
 - Inside `reload_experiment.sh`, we will load the pre-trained for each dataset.
-> **Note**: Due to that the forecasting results are generated via Monte Carlo method, the produced results will be slightly different with different runs.
+> **Note**: Since forecasting results are generated using the Monte Carlo method, the results will vary slightly between runs.
 
 All generated figures are saved to `figures/`. 
 - **Figure 2(a)**: `Toy_Prediction.png`
@@ -117,13 +118,13 @@ Run below command in terminal
 chmod +x retrain_experiment.sh  
 ./retrain_experiment.sh
 ```
-Inside `retrain_experiment.sh`, we retrain the model for for each dataset. This will take around 2 hours (on a MacBook Pro with M1 with memory 16GB).
+Inside `retrain_experiment.sh`, we retrain the model for for each dataset. This process will take approximately 2 hours on a MacBook Pro with an M1 chip and 16GB of memory.
 
-All generated figures are saved to `figures/` similar to above.
+All generated figures are saved in the `figures/` directory similar to above.
 
-All generated tables will be saved to `tables/` similar to above. It will also be shown in the terminal.
+All generated tables will be saved in the `tables/` directory similar to above. It will also be shown in the terminal.
 
-> **Note**: Due to that the training of neural networks is conducted by SGD (can be unstable for some datasets) and the forecasting are generated using Monte Carlo, the produced results will be slightly different. Sometime will needs to retrain the models again if see some deviation.
+> **Note**: Since the neural networks are trained using SGD (which can be unstable for some datasets) and forecasting results are generated via Monte Carlo methods, the produced results may vary slightly between runs. In cases where noticeable deviations occur, you may need to retrain the models.
 
 ## Citation
 If you find this code useful, please cite:
