@@ -21,12 +21,12 @@ This repository provides a PyTorch implementation of DS<sup>3</sup>M, which inco
 ## Structure
 ```bash
 Deep-Switching-State-Space-Model/
-│
 ├─ data/
 │   └─ [Contains 8 different datasets]
 ├─ results/
 │   ├─ outputs/
-│   │   └─ outputs.csv
+│   │   ├─ outputs.csv               # Default outputs from pre-trained models
+│   │   └─ outputs_generated.csv     # Outputs generated after retraining models
 │   └─ checkpoints/
 │       ├─ Electricity/
 │       │   └─ checkpoint.tar
@@ -45,17 +45,19 @@ Deep-Switching-State-Space-Model/
 │       └─ Unemployment/
 │           └─ checkpoint.tar
 ├─ figures/
-│   └─ [Stores generated plots showing DS^3M performance]
+│   └─ [Stores generated plots showing DS³M performance]
 ├─ tables/
-│   └─ [Stores generated tables showing DS^3M performance]
+│   └─ [Stores generated tables showing DS³M performance]
 ├─ src/
-│   ├─ DSSSMCode.py 
-│   └─ utils.py      
-├─ LICENSE           
+│   ├─ DSSSMCode.py   # DS³M model implementation and forecasting routines
+│   └─ utils.py       # Data preprocessing, evaluation metrics, and helper functions
+├─ LICENSE
 ├─ README.md
-├─ main.py
-├─ table_generation.py
-└─ requirements.txt
+├─ main.py        
+├─ reload_experiment.sh  # Script to run pre-trained experiments (Option 1)
+├─ retrain_experiment.sh # Script to retrain models from scratch (Option 2)
+├─ table_generation.py   # Script to generate tables based on model outputs
+└─ requirements.txt    
 ```
 - Download the checkpoints folder from [this link](https://www.dropbox.com/scl/fi/uhqpjmubfcr5wr102nxzr/checkpoints.zip?rlkey=2p6xabwl7e3325eaxefc9slbj&dl=0), unzip it, and place `checkpoints/` folder under `results/`.
 - The specific source and description of the data can be found in the paper -- Section 4.1 (**Simulations**) and Section 4.2 (**Real data analysis**).
