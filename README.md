@@ -55,9 +55,9 @@ Deep-Switching-State-Space-Model/
 ├─ README.md
 ├─ main.py        
 ├─ reload_experiment.sh  # Script to run pre-trained experiments (Option 1)
+├─ requirements.txt
 ├─ retrain_experiment.sh # Script to retrain models from scratch (Option 2)
-├─ table_generation.py   # Script to generate tables based on model outputs
-└─ requirements.txt    
+└─ table_generation.py   # Script to generate tables based on model outputs  
 ```
 - Download the checkpoints folder from [this link](https://www.dropbox.com/scl/fi/uhqpjmubfcr5wr102nxzr/checkpoints.zip?rlkey=2p6xabwl7e3325eaxefc9slbj&dl=0), unzip it, and place `checkpoints/` folder under `results/`.
 - The specific source and description of the data can be found in the paper -- Section 4.1 (**Simulations**) and Section 4.2 (**Real data analysis**).
