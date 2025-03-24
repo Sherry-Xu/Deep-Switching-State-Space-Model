@@ -66,8 +66,8 @@ if dataname == 'Toy':
     n_layers = 1  # Number of the layers of the RNN
     clip = 10  # Gradient clips
     learning_rate = 1e-3  # Learning rate
-    batch_size = 64  # Batch siz
-    n_epochs = 100  # Number of epochs for traning
+    batch_size = 64  # Batch size
+    n_epochs = 100  # Number of epochs for training
 
     RawDataOriginal = pd.read_csv(
         'data/Toy/simulation_data_nonlinear_y.csv', header=None).values
@@ -152,8 +152,8 @@ if dataname == 'Unemployment':
     n_layers = 1  # Number of the layers of the RNN
     clip = 10  # Gradient clips
     learning_rate = 1e-3  # Learning rate
-    batch_size = 64  # Batch siz
-    n_epochs = 500  # Number of epochs for traning
+    batch_size = 64  # Batch size
+    n_epochs = 500  # Number of epochs for training
 
     RawDataOriginal = pd.read_csv(
         'data/Unemployment/UNRATE.csv', header=0).loc[:, 'UNRATE'].values
@@ -265,7 +265,7 @@ if dataname == 'Electricity':
     clip = 10  # Gradient clips
     learning_rate = 1e-3  # Learning rate
     batch_size = 64  # 256 # Batch size
-    n_epochs = 100  # Number of epochs for traning
+    n_epochs = 100  # Number of epochs for training
 
     RawDataOriginal = pd.read_csv(DataPath)
     RawDataOriginal = RawDataOriginal[RawDataOriginal["Date"] < '2019-12-31']
