@@ -441,9 +441,8 @@ def train(model, optimizer, trainX, trainY, epoch, batch_size, n_epochs, status=
 
         optimizer.zero_grad()
         loss.backward()
-        # grad norm clipping, only in pytorch version >= 1.10
-        if (batch == 0) & (epoch % 10 == 0):
-            plot_grad_flow(model.named_parameters())
+        # if (batch == 0) & (epoch % 10 == 0):
+        #     plot_grad_flow(model.named_parameters())
         optimizer.step()
 
     all_d_t_sampled_plot, all_z_t_sampled, loss, all_d_posterior, all_z_posterior_mean = test(
