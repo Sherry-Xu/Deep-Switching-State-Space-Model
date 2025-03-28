@@ -128,6 +128,14 @@ All generated tables will be saved in the `tables/` directory similar to above. 
 
 > **Note**: Since the neural networks are trained using SGD (which can be unstable for some datasets) and forecasting results are generated via Monte Carlo methods, the produced results may vary slightly between runs. In cases where noticeable deviations occur, you may need to retrain the models.
 
+## Additional Models
+
+The current repository includes only the implementation of the DS³M model developed by our team. To reproduce the complete results presented in our paper (specifically Tables 1 and 3), please refer to the original implementations of other referenced models:
+
+- **DSARF**: [https://github.com/ostadabbas/DSARF](https://github.com/ostadabbas/DSARF)
+- **SNLDS**: [https://github.com/google-research/google-research/tree/master/snlds](https://github.com/google-research/google-research/tree/master/snlds)
+- **SRNN**: [https://github.com/marcofraccaro/srnn](https://github.com/marcofraccaro/srnn)
+
 ## Citation
 If you find this code useful, please cite:
 ```bibtex
