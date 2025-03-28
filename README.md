@@ -130,7 +130,7 @@ All generated tables will be saved in the `tables/` directory similar to above. 
 
 ## Additional Models
 
-The current repository includes only the implementation of the DS³M model developed by our team. To reproduce the complete results presented in Tables 1 and 3 of our paper, please refer to the original implementations of other referenced models:
+The current repository includes only the implementation of the DS³M model developed by our team. To reproduce the complete results presented in Tables 1 and 3 of our paper, please adapt the implementations of other  referenced models to our use case.:
 
 - **DSARF**: [https://github.com/ostadabbas/DSARF](https://github.com/ostadabbas/DSARF)
 - **SNLDS**: [https://github.com/google-research/google-research/tree/master/snlds](https://github.com/google-research/google-research/tree/master/snlds)
