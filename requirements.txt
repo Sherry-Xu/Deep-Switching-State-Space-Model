@@ -5,3 +5,4 @@ scikit-learn
 scipy
 seaborn
 torch==2.2.2
+Tqdm
