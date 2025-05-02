@@ -3,6 +3,7 @@ import warnings
 import os
 import copy
 import numpy as np
+import random
 import pandas as pd
 import matplotlib.pyplot as plt
 from torch.optim.lr_scheduler import ReduceLROnPlateau
@@ -18,6 +19,7 @@ import seaborn as sns
 import matplotlib
 matplotlib.use('Agg')  # Set backend before importing pyplot
 warnings.filterwarnings("ignore")
+
 # %%
 remove_mean = False
 remove_residual = False
@@ -32,25 +34,35 @@ parser.add_argument('-p', '--problem', type=str,
                     help='problem', default='Unemployment')
 parser.add_argument('-train', '--train', action='store_true',
                     help='whether to retrain the model')
+parser.add_argument('--seed', type=int, default=1)
 
 # cmd = ['-p', "Toy"]
 # cmd = ['-p', "Lorenz"]
 # cmd = ['-p', "Sleep"]
 # cmd = ['-p', "Unemployment"]
 # cmd = ['-p', "Hangzhou"]
-# cmd = ['-p', "Seattle"]
+# cmd = ['-p', "Seattle", '--train']
 # cmd = ['-p', "Pacific"]
 # cmd = ['-p', "Electricity"]
 # args = parser.parse_args(cmd)
 args = parser.parse_args()
 print(args)
 
+if args.seed is not None:
+    os.environ['PYTHONHASHSEED'] = str(args.seed)
+    random.seed(args.seed)
+    np.random.seed(args.seed)
+    torch.manual_seed(args.seed)
+    torch.cuda.manual_seed_all(args.seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
 # %%
 dataname = args.problem
 print(dataname)
 restore = not args.train
 retry = 3
-# %%
+
 if dataname == 'Toy':
 
     freq = 1
@@ -379,123 +391,6 @@ testY = testY.to(device)
 # %%
 # Training
 start = time.time()
-loss_train_list = []
-loss_valid_list = []
-loss_test_list = []
-best_validation = 1e5
-
-# Init model
-model = DSSSM(x_dim, y_dim, h_dim, z_dim, d_dim,
-              n_layers, device, bidirection).to(device)
-
-# Parameters
-total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-print("The total number of parameters:", total_params)
-
-# Optimizer
-optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
-scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=10)
-early_stopping = EarlyStopping(20, verbose=True)
-
-# %%
-if restore == False:
-
-    best_validation_temp = 1e5
-
-    # train several times to make it more stable
-    for i in range(retry):
-
-        print("n_epochs", n_epochs)
-        for epoch in range(1, n_epochs + 1):
-
-            # Training
-            all_d_t_sampled_train, all_z_t_sampled_train, loss_train, all_d_posterior_train, all_z_posterior_mean_train = train(
-                model, optimizer, trainX, trainY, epoch, batch_size, n_epochs)
-
-            # Validation
-            if dataname in ['Unemployment', 'Sleep']:
-                loss_valid = loss_train
-            else:
-                all_d_t_sampled_valid, all_z_t_sampled_valid, loss_valid, all_d_posterior_valid, all_z_posterior_mean_valid = test(
-                    model, validX, validY, epoch, "valid")
-
-            # Testing
-            all_d_t_sampled_test, all_z_t_sampled_test, loss_test, all_d_posterior_test, all_z_posterior_mean_test = test(
-                model, testX, testY, epoch, "test")
-            loss_train_list.append(loss_train)
-            loss_valid_list.append(loss_valid)
-            loss_test_list.append(loss_test)
-
-            if (loss_valid < best_validation):
-                best_validation = copy.deepcopy(loss_valid)
-                torch.save({
-                    'epoch': epoch,
-                    'model_state_dict': model.state_dict(),
-                    'optimizer_state_dict': optimizer.state_dict(),
-                    'loss': loss_train,
-                }, os.path.join(directoryBest, 'best_temp.tar'))
-
-            # Learning rate scheduler
-            scheduler.step(loss_valid)
-            print("Learning rate:", optimizer.param_groups[0]['lr'])
-
-            # Early stopping
-            loss_valid_average = np.average(loss_valid_list)
-            early_stopping(loss_valid_average, model)
-            if early_stopping.early_stop:
-                print("Early stopping")
-                break
-
-        print("Running Time:", time.time()-start)
-
-        _ = plt.plot(np.array(loss_train_list), label="train")
-        _ = plt.plot(np.array(loss_valid_list), label="validation")
-        _ = plt.plot(np.array(loss_test_list), label="test")
-        _ = plt.xlabel("Epoch")
-        _ = plt.legend()
-
-        plt.show()
-
-        if best_validation < best_validation_temp:
-            best_validation_temp = best_validation
-            PATH = os.path.join(directoryBest, 'best.tar')
-            checkpoint = torch.load(os.path.join(
-                directoryBest, 'best_temp.tar'))
-            model.load_state_dict(checkpoint['model_state_dict'])
-            optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-            torch.save({
-                'epoch': checkpoint['epoch'],
-                'model_state_dict': model.state_dict(),
-                'optimizer_state_dict': optimizer.state_dict(),
-                'loss': checkpoint['loss'],
-            }, PATH)
-
-    os.remove(os.path.join(directoryBest, 'best_temp.tar'))
-
-# %%
-# Reload the parameters
-if restore:
-    PATH = os.path.join(directoryBest, 'checkpoint.tar')
-else:
-    PATH = os.path.join(directoryBest, 'best.tar')
-
-# %%
-model = DSSSM(x_dim, y_dim, h_dim, z_dim, d_dim,
-              n_layers, device, bidirection).to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
-checkpoint = torch.load(PATH, map_location=torch.device('cpu'))
-model.load_state_dict(checkpoint['model_state_dict'])
-optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-
-epoch = checkpoint['epoch']
-loss = checkpoint['loss']
-print("Epoch:", epoch)
-total_params = sum(p.numel() for p in model.parameters())
-# total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-# print("The total number of parameters:", total_params)
-
-# %%
-
 
 def forecast(model, testX, testY, forecaststep=1, MC_S=200):
 
@@ -504,7 +399,6 @@ def forecast(model, testX, testY, forecaststep=1, MC_S=200):
 
     # print(forecast_MC.shape, forecast_d_MC.shape, forecast_z_MC.shape)
 
-    # %%
     if forecaststep == 1:
         all_testForecast = normalize_invert(
             forecast_MC.squeeze(1).transpose(1, 0, 2), moments)
@@ -523,7 +417,6 @@ def forecast(model, testX, testY, forecaststep=1, MC_S=200):
     forecast_d_MC_argmax = np.argmax(
         np.array(forecast_d_MC_argmax), axis=0).reshape(-1)
 
-    # %%
     if remove_mean:
         testForecast_mean = np.mean(
             all_testForecast, axis=1) + np.tile(means[0, :, :], (int(test_len/freq), 1))
@@ -546,17 +439,121 @@ def forecast(model, testX, testY, forecaststep=1, MC_S=200):
     testOriginal = RawDataOriginal[-int(test_len/freq):, :, :].reshape(-1, RawDataOriginal.shape[2])
     # print(testForecast_mean.shape, testOriginal.shape)
 
-    # %%
     # Evaluation results
     res = evaluation(testForecast_mean.T, testOriginal.T)
 
     return res, testForecast_mean, testOriginal, size, forecast_d_MC_argmax, testForecast_uq, testForecast_lq
 
 
+# %%
+if restore == False:
+
+    unique_states = 0
+
+    while unique_states < 2:
+        # Init model
+        model = DSSSM(x_dim, y_dim, h_dim, z_dim, d_dim,n_layers, device, bidirection).to(device)
+        # Optimizer
+        total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+        print("The total number of parameters:", total_params)
+
+        optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+        scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=10)
+        early_stopping = EarlyStopping(20, verbose=True)
+        loss_train_list, loss_valid_list, loss_test_list = [], [], []
+        best_validation = 1e5
+        best_validation_temp = 1e5
+        
+        for i in range(retry):
+            print("n_epochs", n_epochs)
+            for epoch in range(1, n_epochs + 1):
+
+                # Training
+                all_d_t_sampled_train, all_z_t_sampled_train, loss_train, all_d_posterior_train, all_z_posterior_mean_train = train(
+                    model, optimizer, trainX, trainY, epoch, batch_size, n_epochs)
+
+                # Validation
+                if dataname in ['Unemployment', 'Sleep']:
+                    loss_valid = loss_train
+                else:
+                    all_d_t_sampled_valid, all_z_t_sampled_valid, loss_valid, all_d_posterior_valid, all_z_posterior_mean_valid = test(
+                        model, validX, validY, epoch, "valid")
+
+                # Testing
+                all_d_t_sampled_test, all_z_t_sampled_test, loss_test, all_d_posterior_test, all_z_posterior_mean_test = test(
+                    model, testX, testY, epoch, "test")
+                loss_train_list.append(loss_train)
+                loss_valid_list.append(loss_valid)
+                loss_test_list.append(loss_test)
+
+                if (loss_valid < best_validation):
+                    best_validation = copy.deepcopy(loss_valid)
+                    torch.save({
+                        'epoch': epoch,
+                        'model_state_dict': model.state_dict(),
+                        'optimizer_state_dict': optimizer.state_dict(),
+                        'loss': loss_train,
+                    }, os.path.join(directoryBest, 'best_temp.tar'))
+
+                # Learning rate scheduler
+                scheduler.step(loss_valid)
+                print("Learning rate:", optimizer.param_groups[0]['lr'])
+
+                # Early stopping
+                loss_valid_average = np.average(loss_valid_list)
+                early_stopping(loss_valid_average, model)
+                if early_stopping.early_stop:
+                    print("Early stopping")
+                    break
+
+            print("Running Time:", time.time()-start)
+
+            if best_validation < best_validation_temp:
+                best_validation_temp = best_validation
+                PATH = os.path.join(directoryBest, 'best.tar')
+                checkpoint = torch.load(os.path.join(
+                    directoryBest, 'best_temp.tar'))
+                model.load_state_dict(checkpoint['model_state_dict'])
+                optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+                torch.save({
+                    'epoch': checkpoint['epoch'],
+                    'model_state_dict': model.state_dict(),
+                    'optimizer_state_dict': optimizer.state_dict(),
+                    'loss': checkpoint['loss'],
+                }, PATH)
+
+        #训练后检查离散状态数
+        _, _, _, _, forecast_d_MC_argmax, _, _ = forecast(model, testX, testY, forecaststep=1, MC_S=200)
+        unique_states = len(np.unique(forecast_d_MC_argmax))
+
+    os.remove(os.path.join(directoryBest, 'best_temp.tar'))
+
+
+# %%
+# Reload the parameters
+if restore:
+    PATH = os.path.join(directoryBest, 'checkpoint.tar')
+else:
+    PATH = os.path.join(directoryBest, 'best.tar')
+
+model = DSSSM(x_dim, y_dim, h_dim, z_dim, d_dim,
+              n_layers, device, bidirection).to(device)
+optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+checkpoint = torch.load(PATH, map_location=torch.device('cpu'))
+model.load_state_dict(checkpoint['model_state_dict'])
+optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+
+epoch = checkpoint['epoch']
+loss = checkpoint['loss']
+print("Epoch:", epoch)
+total_params = sum(p.numel() for p in model.parameters())
+# print("The total number of parameters:", total_params)
+
+
+# %%
 res, testForecast_mean, testOriginal, size, forecast_d_MC_argmax, testForecast_uq, testForecast_lq = forecast(
     model, testX, testY, forecaststep=1, MC_S=200)
 
-# %%
 my_cmap = matplotlib.cm.get_cmap('rainbow')
 cmap = plt.get_cmap('RdBu', d_dim)
 
