@@ -5,9 +5,9 @@ python main.py -p Toy --train --seed 0
 python main.py -p Toy --train --seed 2
 python main.py -p Lorenz --train --seed 16
 python main.py -p Lorenz --train --seed 5
-python main.py -p Lorenz --train --seed 2
 python main.py -p Lorenz --train --seed 4
-python main.py -p Lorenz --train
+python main.py -p Lorenz --train --seed 2
+python main.py -p Lorenz --train --seed 19
 python main.py -p Sleep --train
 python main.py -p Unemployment --train
 python main.py -p Hangzhou --train
