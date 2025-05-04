@@ -61,7 +61,7 @@ if args.seed is not None:
 dataname = args.problem
 print(dataname)
 restore = not args.train
-retry = 3
+retry = 1
 
 if dataname == 'Toy':
 
@@ -142,13 +142,11 @@ if dataname == 'Sleep':
     learning_rate = 1e-3  # Learning rate
     batch_size = 64  # Batch size
     n_epochs = 100
-
     dataset = pd.read_csv("data/Sleep/b1.txt", sep=" ", header=None)
     chest = dataset.iloc[:, 1].values.reshape(-1, 1)
     train_data = chest[6200:7200, :]
     test_data = chest[5200:6200, :]
     RawDataOriginal = np.concatenate((train_data, test_data)).reshape(-1, 1, 1)
-
 # %%
 if dataname == 'Unemployment':
     freq = 1
@@ -170,7 +168,7 @@ if dataname == 'Unemployment':
     RawDataOriginal = pd.read_csv(
         'data/Unemployment/UNRATE.csv', header=0).loc[:, 'UNRATE'].values
     RawDataOriginal = RawDataOriginal.reshape(-1, 1, 1)
-    torch.manual_seed(19)
+    torch.manual_seed(2)
 
 # %%
 if dataname == "Hangzhou":
@@ -392,6 +390,7 @@ testY = testY.to(device)
 # Training
 start = time.time()
 
+
 def forecast(model, testX, testY, forecaststep=1, MC_S=200):
 
     forecast_MC, forecast_d_MC, forecast_z_MC = model._forecastingMultiStep(
@@ -436,7 +435,7 @@ def forecast(model, testX, testY, forecaststep=1, MC_S=200):
         testForecast_uq = np.quantile(all_testForecast, 0.95, axis=1)
         testForecast_lq = np.quantile(all_testForecast, 0.05, axis=1)
 
-    testOriginal = RawDataOriginal[-int(test_len/freq):, :, :].reshape(-1, RawDataOriginal.shape[2])
+    testOriginal = RawDataOriginal[-int(test_len/freq)                                   :, :, :].reshape(-1, RawDataOriginal.shape[2])
     # print(testForecast_mean.shape, testOriginal.shape)
 
     # Evaluation results
@@ -452,18 +451,21 @@ if restore == False:
 
     while unique_states < 2:
         # Init model
-        model = DSSSM(x_dim, y_dim, h_dim, z_dim, d_dim,n_layers, device, bidirection).to(device)
+        model = DSSSM(x_dim, y_dim, h_dim, z_dim, d_dim,
+                      n_layers, device, bidirection).to(device)
         # Optimizer
-        total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+        total_params = sum(p.numel()
+                           for p in model.parameters() if p.requires_grad)
         print("The total number of parameters:", total_params)
 
         optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
-        scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=10)
+        scheduler = ReduceLROnPlateau(
+            optimizer, mode='min', factor=0.1, patience=10)
         early_stopping = EarlyStopping(20, verbose=True)
         loss_train_list, loss_valid_list, loss_test_list = [], [], []
         best_validation = 1e5
         best_validation_temp = 1e5
-        
+
         for i in range(retry):
             print("n_epochs", n_epochs)
             for epoch in range(1, n_epochs + 1):
@@ -522,8 +524,9 @@ if restore == False:
                     'loss': checkpoint['loss'],
                 }, PATH)
 
-        #训练后检查离散状态数
-        _, _, _, _, forecast_d_MC_argmax, _, _ = forecast(model, testX, testY, forecaststep=1, MC_S=200)
+        # 训练后检查离散状态数
+        _, _, _, _, forecast_d_MC_argmax, _, _ = forecast(
+            model, testX, testY, forecaststep=1, MC_S=200)
         unique_states = len(np.unique(forecast_d_MC_argmax))
 
     os.remove(os.path.join(directoryBest, 'best_temp.tar'))
