@@ -34,7 +34,7 @@ parser.add_argument('-p', '--problem', type=str,
                     help='problem', default='Unemployment')
 parser.add_argument('-train', '--train', action='store_true',
                     help='whether to retrain the model')
-parser.add_argument('--seed', type=int, default=1)
+parser.add_argument('--seed', type=int, default=3)
 
 # cmd = ['-p', "Toy"]
 # cmd = ['-p', "Lorenz"]
